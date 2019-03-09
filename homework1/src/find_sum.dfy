@@ -1,15 +1,11 @@
 method find_sum(a: seq<int>, s: int) returns (found: bool, i:  int, j: int)
 requires sorted(a)
-ensures found ==> (0 <= i < j < |a| && a[i] + a[j] == s)
-ensures !found <==> (forall m, n | 0 <= m < n < |a| :: a[m] + a[n] != s)
+ensures found ==> (0 <= i <= j < |a| && a[i] + a[j] == s)
+ensures !found <==> (forall m, n | 0 <= m <= n < |a| :: a[m] + a[n] != s)
 {
   i, j := 0, |a| - 1;
-  if |a| < 2 {
-    found := false;
-    return;
-  }
-  while i < j
-  invariant 0 <= i <= j < |a|
+  while i <= j
+  invariant 0 <= i <= j+1 <= |a|
   invariant forall ii, x | 0 <= ii < i && 0 <= x < |a| :: a[ii] + a[x] != s
   invariant forall jj, x | j < jj < |a| && 0 <= x < |a| :: a[x] + a[jj] != s
   {
@@ -26,7 +22,6 @@ ensures !found <==> (forall m, n | 0 <= m < n < |a| :: a[m] + a[n] != s)
   }
   found := false;
 }
-
 predicate sorted(a: seq<int>)
 {
   forall k, l | 0 <= k <= l < |a| :: a[k] <= a[l]
