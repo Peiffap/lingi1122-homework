@@ -1,4 +1,4 @@
-method find_sum(a: seq<int>, s: int) returns (found: bool, i:  int, j: int)
+method find_sum(a: seq<int>, s: int) returns (found: bool, i: int, j: int)
 requires sorted(a)
 ensures found ==> (0 <= i <= j < |a| && a[i] + a[j] == s)
 ensures !found <==> (forall m, n | 0 <= m <= n < |a| :: a[m] + a[n] != s)
