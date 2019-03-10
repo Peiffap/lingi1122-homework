@@ -3,6 +3,7 @@
 % Rustan Leino, 22 June 2008.
 
 \usepackage{listings}
+\RequirePackage{mathtools}
 
 \lstdefinelanguage{dafny}{
   morekeywords={class,datatype,codatatype,newtype,type,iterator,trait,extends,
@@ -20,9 +21,13 @@
       where,calc,modify
       },
   literate=%
+    {<}{$<$}1
+    {>}{$>$}1
+    {+}{$+$}1
+    {-}{$-$}1
     {:}{$\colon$}1
-    {::}{$\bullet$}2
-    {:=}{$:$$=$}2
+    %{::}{$\bullet$}2
+    {:=}{$\coloneqq$}2
     {:|}{${:}\!\!|$}2
     {!}{$\lnot$}1
     {!!}{$\not\cap$}1
@@ -36,13 +41,13 @@
     {<=set}{$\subseteq$}1
     {+set}{$\cup$}1
     {*set}{$\cap$}1
-    {==>}{$\Longrightarrow$}3 
-    {<==}{$\Longleftarrow$}3 
+    {==>}{$\implies$}3 
+    {<==}{$\impliedby$}3 
     {=>}{$\Rightarrow$}2
-    {<==>}{$\Longleftrightarrow$}4 
+    {<==>}{$\iff$}4 
     {forall}{$\forall$}1
     {exists}{$\exists$}1
-    {!in}{$\not\in$}1
+    {!in}{$\notin$}1
     {\\in}{$\in$}1
     % the following isn't actually Dafny, but it gives the option to produce nicer latex
     {<<}{$\langle$}1

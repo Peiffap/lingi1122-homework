@@ -1,9 +1,10 @@
 \documentclass{elsarticle}
-\usepackage[a4paper,left=2.25cm,right=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
+\usepackage[a4paper,left=2.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
 \usepackage{cite}
-\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
 \usepackage{mathtools}
 \usepackage[french]{babel}
+\usepackage{bm}
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
@@ -76,11 +77,12 @@ L'algorithme ne modifie rien.
 \subsection{Postcondition}
 La première postcondition est, informellement, que si la valeur booléenne est vraie,
 alors $i$ et $j$ contiennent les bonnes valeurs d'indices.
-La seconde postcondition est que la valeur booléenne est fausse si et seulement si il n'existe aucune paire d'indices telle que la somme des entrées de $a$ définies par cette paire d'indice n'est égale à $s$; nous pouvons aussi dire que, pour toute paire d'indices dans le domaine de $a$, la somme des entrées définies par ces indices est différente de $s$.
-Formellement (en appelant $\texttt{found}$ la valeur booléenne),
+La seconde postcondition est que si la valeur booléenne est fausse,
+alors la somme de toute paire est différente de $s$ et que si la somme est différente de $s$ pour toute paire, alors la valeur booléenne retournée est fausse.
+Formellement (en appelant \inlinedafny{found} la valeur booléenne),
 \begin{align*}
-&\texttt{found} \implies (0 \le i \le j < \abs{a}) \land (a[i] + a[j] = s)\,, \\
-\land \lnot &\texttt{found} \iff \forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s\,.
+&\textnormal{\inlinedafny{found}} \implies (0 \le i \le j < \abs{a}) \land (a[i] + a[j] = s) \\
+\land \lnot &\textnormal{\inlinedafny{found}} \iff \forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s\,.
 \end{align*}
 
 \section{Implémentation}
@@ -95,25 +97,8 @@ Le graphe d'exécution pour l'algorithme ci-dessus est donné sur la \textsc{Fig
 	\caption{Le graphe d'exécution complet pour le programme donné.}
 	\label{fig:execgraph}
 \end{figure}
-Afin de faciliter les preuves pour les différents chemins simples,
-la \textsc{Figure}~\ref{fig:simplepaths} reprend ceux-ci de façon plus lisible.
+Afin de faciliter les preuves, chaque chemin simple est redessiné à coté de sa preuve de correction.
 \begin{figure}[htbp]
-\centering
-	\begin{subfigure}{0.3\textwidth}
-	\centering
-	\includesvg[width=0.4\textwidth]{simplepath1}
-	\label{fig:1}
-	\end{subfigure}\hspace{3cm}
-	\begin{subfigure}{0.3\textwidth}
-	\centering
-	\includesvg[width=0.5\textwidth]{simplepath2}
-	\label{fig:2}
-	\end{subfigure}\\
-	\begin{subfigure}{0.3\textwidth}
-	\centering
-	\includesvg[width=0.5\textwidth]{simplepath3}
-	\label{fig:3}
-	\end{subfigure}\hfill
 	\begin{subfigure}{0.3\textwidth}
 	\centering
 	\includesvg[width=0.5\textwidth]{simplepath4}
@@ -127,6 +112,132 @@ la \textsc{Figure}~\ref{fig:simplepaths} reprend ceux-ci de façon plus lisible.
 	\caption{Représentations plus propres des différents chemins simples.}
 	\label{fig:simplepaths}
 \end{figure}
+
+\section{Preuve de correction}
+Avant de prouver la correction des différents chemins simples, définissons quelques prédicats:
+\begin{align*}
+\textnormal{\inlinedafny{sorted}}(a) \equiv \forall k, \ell \mid 0 \le k \le \ell < \abs{a} :: a[k] \le a[\ell] \tag{Pre} \\\\
+\begin{array}{l}
+\phantom{{} \land {}} 0 \le i \le j+1 \le \abs{a} \\ {} \land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\ {} \land \forall q, x \mid j < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s
+\end{array}\tag{I}
+\end{align*}
+\subsection{Précondition jusqu'à l'entrée de la boucle}
+\noindent\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{figure}[H]
+	\centering
+	\includesvg[width=0.3\textwidth]{simplepath1}
+	\caption*{@Pre $\to$ @I.}
+	\label{fig:1}
+\end{figure}
+\end{minipage}%
+\begin{minipage}[c]{0.5\textwidth}
+\begin{align*}
+&\Big[\textnormal{Pre} \Big] \\
+&\Big[0 \le 0 \le \abs{a} - 1 +1 \le \abs{a} \\
+&\land \forall p, x \mid 0 \le p < 0 \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
+&\land \forall q, x \mid \abs{a} - 1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s\Big] \\
+&\textnormal{\inlinedafny{i, j := 0, |a| - 1;}} \\
+&\Big[\textnormal{I} \Big]
+\end{align*}
+Afin d'affirmer la correction de ce chemin simple, on doit encore prouver que le deuxième prédicat est bien une conséquence de la précondition.
+\begin{proof}
+On peut simplifier ce deuxième prédicat pour montrer qu'il est en fait équivalent à $\top$.
+Il est donc toujours impliqué par la précondition.
+\end{proof}
+\end{minipage}
+\subsection{Boucle dans le cas $m > s$}
+\noindent\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{figure}[H]
+	\centering
+	\includesvg[width=0.3\textwidth]{simplepath2}
+	\caption*{@I $\to$ @I pour $m > s$.}
+	\label{fig:2}
+\end{figure}
+\end{minipage}%
+\begin{minipage}[c]{0.5\textwidth}
+\begin{align*}
+&\Big[\textnormal{I} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] > s \implies \textnormal{I}_2\big) \Big] \\
+&\textnormal{\inlinedafny{assume i <= j;}} \\
+&\Big[a[i] + a[j] > s \implies \textnormal{I}_2 \Big] \\
+&\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
+&\Big[m > s \implies \textnormal{I}_2 \Big] \\
+&\textnormal{\inlinedafny{assume m > s;}} \\
+&\Big[\textnormal{I}_2\Big] \equiv \Big[0 \le i \le j \le \abs{a} \\
+&\land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
+&\land \forall q, x \mid j-1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
+&\textnormal{\inlinedafny{j := j - 1;}} \\
+&\Big[\textnormal{I} \Big]
+\end{align*}
+Pour montrer que l'invariant implique bien le deuxième prédicat,
+on doit prouver que
+\begin{align*}
+&\Big(\textnormal{I} \implies \Big[i \le j \implies \big(a[i] + a[j] > s \implies \textnormal{I}_2\big) \Big]\Big) \\
+\equiv &\Big[\textnormal{I} \land i \le j \land a[i] + a[j] > s\Big] \implies \textnormal{I}_2\,.
+\end{align*}
+\begin{proof}
+Pour ne pas trop surcharger les équations, on procède partie par partie.
+Dans l'invariant I, la première partie de la conjonction devient $0 \le i < j \le \abs{a}$,
+car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
+La deuxième partie de la conjonction est exactement la même dans I et I$_2$,
+et ne nécessite donc pas de développement.
+Pour la troisième partie, elle est identique sauf dans le cas $q = j$.
+Dans ce cas, comme on a également que $a[i] + a[j] > s$,
+et que le tableau est trié, le seul moyen d'obtenir $a[i] + a[j] = s$ avec $a[j]$ fixé serait de prendre un élément $a[p] < a[i]$, avec donc $0 \le p < i$, comme le tableau est trié.
+Or, par la deuxième partie de la conjonction de l'invariant, on sait que $\forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s$.
+Dans notre cas de figure, il suffit de prendre $x = j$ pour prouver qu'on n'aura jamais $a[p] + a[j] = s$ pour $0 \le 0 p < i$.
+\end{proof}
+\end{minipage}
+
+\subsection{Boucle dans le cas $m < s$}
+\noindent\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{figure}[H]
+	\centering
+	\includesvg[width=0.3\textwidth]{simplepath3}
+	\caption*{@I $\to$ @I pour $m < s$.}
+	\label{fig:3}
+\end{figure}
+\end{minipage}%
+\begin{minipage}[c]{0.5\textwidth}
+\begin{align*}
+&\Big[\textnormal{I} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] < s \implies \textnormal{I}_3\big) \Big] \\
+&\textnormal{\inlinedafny{assume i <= j;}} \\
+&\Big[a[i] + a[j] < s \implies \textnormal{I}_3 \Big] \\
+&\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
+&\Big[\big(\lnot(m > s) \implies (m < s \implies \textnormal{I}_3)\big) \equiv \big(m < s \implies \textnormal{I}_3\big)\Big] \\
+&\textnormal{\inlinedafny{assume !(m > s);}} \\
+&\Big[m < s \implies \textnormal{I}_3 \Big] \\
+&\textnormal{\inlinedafny{assume m < s;}} \\
+&\Big[\textnormal{I}_3\Big] \equiv \Big[0 \le i + 1 \le j + 1 \le \abs{a} \\
+&\land \forall p, x \mid 0 \le p < i + 1 \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
+&\land \forall q, x \mid j < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
+&\textnormal{\inlinedafny{i := i +1;}}\\
+&\Big[\textnormal{I} \Big]
+\end{align*}
+Pour montrer que l'invariant implique bien le deuxième prédicat,
+on doit prouver que
+\begin{align*}
+&\Big(\textnormal{I} \implies \Big[i \le j \implies \big(a[i] + a[j] < s \implies \textnormal{I}_3\big) \Big]\Big) \\
+\equiv &\Big[\textnormal{I} \land i \le j \land a[i] + a[j] < s\Big] \implies \textnormal{I}_3\,.
+\end{align*}
+\begin{proof}
+Pour ne pas trop surcharger les équations, on procède partie par partie.
+Dans l'invariant I, la première partie de la conjonction devient $0 \le i < j \le \abs{a}$,
+car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
+La troisième partie de la conjonction est exactement la même dans I et I$_3$,
+et ne nécessite donc pas de développement.
+Pour la deuxième partie, elle est identique sauf dans le cas $p = i$.
+Dans ce cas, comme on a également que $a[i] + a[j] < s$,
+et que le tableau est trié, le seul moyen d'obtenir $a[i] + a[j] = s$ avec $a[i]$ fixé serait de prendre un élément $a[q] > a[j]$, avec donc $j  < p < \abs{a}$, comme le tableau est trié.
+Or, par la troisième partie de la conjonction de l'invariant, on sait que $\forall q, x \mid j < p < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s$.
+Dans notre cas de figure, il suffit de prendre $x = i$ pour prouver qu'on n'aura jamais $a[i] + a[q] = s$ pour $j < q < \abs{a}$.
+\end{proof}
+\end{minipage}
+
 
 \begin{thebibliography}{00}
 	\bibitem{robtex} \url{https://www.robtex.com/dns-lookup/www.aliexpress.com}, accessed on December 1, 2018.
