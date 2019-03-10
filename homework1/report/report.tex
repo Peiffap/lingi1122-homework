@@ -40,7 +40,7 @@
 \author[add1]{Alexandre \textsc{Gobeaux}}
 \ead{alexandre.gobeaux@student.uclouvain.be}
 \author[add1]{Louis \textsc{Navarre}}
-\ead{louis.navarre@student.uclouvain.be}
+\ead{navarre.louis@student.uclouvain.be}
 \author[add1]{Gilles \textsc{Peiffer}}
 \ead{gilles.peiffer@student.uclouvain.be}
 
@@ -50,16 +50,16 @@ Ce document donne un algorithme pour résoudre le problème 2SUM ainsi qu'une pr
 \maketitle
 
 \section{Description du problème et de la solution}
-Le problème à résoudre est celui d'une séquence d'entiers triée $a$ dans laquelle il faut déterminer si oui ou non deux d'entre-eux (potentiellement deux fois le même) ont une somme égale à un entier prédéfini $s$.
+Le problème à résoudre est celui d'une séquence d'entiers triée $a$ dans laquelle il faut déterminer si oui ou non deux entrées définies par ces entiers (potentiellement deux fois les mêmes) ont une somme égale à un entier prédéfini $s$.
 Si oui, alors le programme doit renvoyer \og \inlinedafny{true} \fg, ainsi que les indices des deux entiers qui satisfont la condition, sinon il renvoie \og \inlinedafny{false} \fg, et la valeur des indices n'a pas d'importance.
 
 Notre algorithme fonctionne en temps linéaire ($\mathcal{O}(n)$), en utilisant deux pointeurs:
 le premier commence au premier élément du tableau, alors que le deuxième commence à la fin.
-On évalue leur somme à chaque itération, tant que le premier pointeur est plus bas que le second:
+Tant que le premier pointeur est plus petit ou égal au second, on évalue leur somme à chaque itération:
 \begin{itemize}
 	\item si celle-ci est plus petite que $s$, on avance d'une unité le premier pointeur;
 	\item si celle-ci est plus grande que $s$, on recule d'une unité le deuxième pointeur et
-	\item si celle-ci est égale à $s$, on retourne les valeurs ainsi que la valeur \og \inlinedafny{true}\fg.
+	\item si celle-ci est égale à $s$, on retourne la valeur des indices ainsi que la valeur \og \inlinedafny{true}\fg.
 \end{itemize}
 L'algorithme peut donc se terminer de deux façons: soit il trouve une paire d'indices qui satisfait la condition, passant donc dans la troisième possibilité ci-dessus,
 soit les pointeurs se croisent, ce qui signifie que la séquence ne contient pas de paire satisfaisant la condition.
@@ -69,15 +69,14 @@ soit les pointeurs se croisent, ce qui signifie que la séquence ne contient pas
 La précondition est que la séquence soit triée.
 Formellement, on demande que
 \[
-\forall k, \ell \mid 0 \ge k \le \ell < \abs{a} :: a[k] \le a[l]\,.
+\forall k, \ell \mid 0 \le k \le \ell < \abs{a} :: a[k] \le a[l]\,.
 \]
 \subsection{Modifie}
 L'algorithme ne modifie rien.
 \subsection{Postcondition}
 La première postcondition est, informellement, que si la valeur booléenne est vraie,
 alors $i$ et $j$ contiennent les bonnes valeurs d'indices.
-La seconde postcondition est que si la valeur booléenne est fausse,
-alors la somme de toute paire est différente de $s$ et que si la somme est différente de $s$ pour toute paire, alors la valeur booléenne retournée est fausse.
+La seconde postcondition est que la valeur booléenne est fausse si et seulement si il n'existe aucune paire d'indices telle que la somme des entrées de $a$ définies par cette paire d'indice n'est égale à $s$; nous pouvons aussi dire que, pour toute paire d'indices dans le domaine de $a$, la somme des entrées définies par ces indices est différente de $s$.
 Formellement (en appelant $\texttt{found}$ la valeur booléenne),
 \begin{align*}
 &\texttt{found} \implies (0 \le i \le j < \abs{a}) \land (a[i] + a[j] = s)\,, \\
