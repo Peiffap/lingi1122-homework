@@ -6,8 +6,8 @@ ensures !found <==> (forall m, n | 0 <= m <= n < |a| :: a[m] + a[n] != s)
   i, j := 0, |a| - 1;
   while i <= j
   invariant 0 <= i <= j+1 <= |a|
-  invariant forall ii, x | 0 <= ii < i && 0 <= x < |a| :: a[ii] + a[x] != s
-  invariant forall jj, x | j < jj < |a| && 0 <= x < |a| :: a[x] + a[jj] != s
+  invariant forall p, x | 0 <= p < i && 0 <= x < |a| :: a[p] + a[x] != s
+  invariant forall q, x | j < q < |a| && 0 <= x < |a| :: a[x] + a[q] != s
   {
     var m;
     m := a[i] + a[j];

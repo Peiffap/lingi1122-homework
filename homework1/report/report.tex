@@ -1,0 +1,135 @@
+\documentclass{elsarticle}
+\usepackage[a4paper,left=2.25cm,right=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage[french]{babel}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{dafny}
+\lstset{language=dafny}
+\graphicspath{{img/}}
+\usepackage{svg}
+
+\makeatletter
+\def\ps@pprintTitle{%
+	\let\@oddhead\@empty
+	\let\@evenhead\@empty
+	\def\@oddfoot{\centerline{\thepage}}%
+	\let\@evenfoot\@oddfoot}
+\makeatother
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\newcommand{\abs}[1]{\left\lvert#1\right\lvert}
+\usepackage{siunitx}
+\begin{document}
+\title{Méthodes de conception de programmes \\ Devoir 1: Preuve de programme}
+\date{12 mars 2019}
+
+\address[add1]{École Polytechnique, Université catholique de Louvain, Place de l'Université 1, 1348 Ottignies-Louvain-la-Neuve, Belgique}
+
+\author[add1]{Alexandre \textsc{Gobeaux}}
+\ead{alexandre.gobeaux@student.uclouvain.be}
+\author[add1]{Louis \textsc{Navarre}}
+\ead{louis.navarre@student.uclouvain.be}
+\author[add1]{Gilles \textsc{Peiffer}}
+\ead{gilles.peiffer@student.uclouvain.be}
+
+\begin{abstract}
+Ce document donne un algorithme pour résoudre le problème 2SUM ainsi qu'une preuve de correction totale pour celui-ci, par rapport aux spécifications définies.
+\end{abstract}
+\maketitle
+
+\section{Description du problème et de la solution}
+Le problème à résoudre est celui d'une séquence d'entiers triée $a$ dans laquelle il faut déterminer si oui ou non deux d'entre-eux (potentiellement deux fois le même) ont une somme égale à un entier prédéfini $s$.
+Si oui, alors le programme doit renvoyer \og \inlinedafny{true} \fg, ainsi que les indices des deux entiers qui satisfont la condition, sinon il renvoie \og \inlinedafny{false} \fg, et la valeur des indices n'a pas d'importance.
+
+Notre algorithme fonctionne en temps linéaire ($\mathcal{O}(n)$), en utilisant deux pointeurs:
+le premier commence au premier élément du tableau, alors que le deuxième commence à la fin.
+On évalue leur somme à chaque itération, tant que le premier pointeur est plus bas que le second:
+\begin{itemize}
+	\item si celle-ci est plus petite que $s$, on avance d'une unité le premier pointeur;
+	\item si celle-ci est plus grande que $s$, on recule d'une unité le deuxième pointeur et
+	\item si celle-ci est égale à $s$, on retourne les valeurs ainsi que la valeur \og \inlinedafny{true}\fg.
+\end{itemize}
+L'algorithme peut donc se terminer de deux façons: soit il trouve une paire d'indices qui satisfait la condition, passant donc dans la troisième possibilité ci-dessus,
+soit les pointeurs se croisent, ce qui signifie que la séquence ne contient pas de paire satisfaisant la condition.
+
+\section{Spécification formelle}
+\subsection{Précondition}
+La précondition est que la séquence soit triée.
+Formellement, on demande que
+\[
+\forall k, \ell \mid 0 \ge k \le \ell < \abs{a} :: a[k] \le a[l]\,.
+\]
+\subsection{Modifie}
+L'algorithme ne modifie rien.
+\subsection{Postcondition}
+La première postcondition est, informellement, que si la valeur booléenne est vraie,
+alors $i$ et $j$ contiennent les bonnes valeurs d'indices.
+La seconde postcondition est que si la valeur booléenne est fausse,
+alors la somme de toute paire est différente de $s$ et que si la somme est différente de $s$ pour toute paire, alors la valeur booléenne retournée est fausse.
+Formellement (en appelant $\texttt{found}$ la valeur booléenne),
+\begin{align*}
+&\texttt{found} \implies (0 \le i \le j < \abs{a}) \land (a[i] + a[j] = s)\,, \\
+\land \lnot &\texttt{found} \iff \forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s\,.
+\end{align*}
+
+\section{Implémentation}
+L'implémentation de l'algorithme donné précédemment en Dafny est la suivante.
+\lstfile{../src/find_sum.dfy}
+
+\section{Graphe d'exécution}
+Le graphe d'exécution pour l'algorithme ci-dessus est donné sur la \textsc{Figure}~\ref{fig:execgraph}.
+\begin{figure}[htbp]
+	\centering
+	\includesvg[width=\textwidth]{execgraph}
+	\caption{Le graphe d'exécution complet pour le programme donné.}
+	\label{fig:execgraph}
+\end{figure}
+Afin de faciliter les preuves pour les différents chemins simples,
+la \textsc{Figure}~\ref{fig:simplepaths} reprend ceux-ci de façon plus lisible.
+\begin{figure}[htbp]
+\centering
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includesvg[width=0.4\textwidth]{simplepath1}
+	\label{fig:1}
+	\end{subfigure}\hspace{3cm}
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includesvg[width=0.5\textwidth]{simplepath2}
+	\label{fig:2}
+	\end{subfigure}\\
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includesvg[width=0.5\textwidth]{simplepath3}
+	\label{fig:3}
+	\end{subfigure}\hfill
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includesvg[width=0.5\textwidth]{simplepath4}
+	\label{fig:4}
+	\end{subfigure}\hfill
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includesvg[width=0.5\textwidth]{simplepath5}
+	\label{fig:5}
+	\end{subfigure}
+	\caption{Représentations plus propres des différents chemins simples.}
+	\label{fig:simplepaths}
+\end{figure}
+
+\begin{thebibliography}{00}
+	\bibitem{robtex} \url{https://www.robtex.com/dns-lookup/www.aliexpress.com}, accessed on December 1, 2018.
+\end{thebibliography}
+\end{document}
