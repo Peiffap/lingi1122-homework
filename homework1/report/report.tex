@@ -98,67 +98,59 @@ Le graphe d'exécution pour l'algorithme ci-dessus est donné sur la \textsc{Fig
 	\label{fig:execgraph}
 \end{figure}
 Afin de faciliter les preuves, chaque chemin simple est redessiné à coté de sa preuve de correction.
-\begin{figure}[htbp]
-	\begin{subfigure}{0.3\textwidth}
-	\centering
-	\includesvg[width=0.5\textwidth]{simplepath4}
-	\label{fig:4}
-	\end{subfigure}\hfill
-	\begin{subfigure}{0.3\textwidth}
-	\centering
-	\includesvg[width=0.5\textwidth]{simplepath5}
-	\label{fig:5}
-	\end{subfigure}
-	\caption{Représentations plus propres des différents chemins simples.}
-	\label{fig:simplepaths}
-\end{figure}
+Le point de coupe se trouve à l'entrée de la boucle.
 
-\section{Preuve de correction}
+\section{Preuve de correction partielle}
+\label{sec:graph}
 Avant de prouver la correction des différents chemins simples, définissons quelques prédicats:
 \begin{align*}
-\textnormal{\inlinedafny{sorted}}(a) \equiv \forall k, \ell \mid 0 \le k \le \ell < \abs{a} :: a[k] \le a[\ell] \tag{Pre} \\\\
-\begin{array}{l}
+&\begin{array}{l} \phantom{{} \land {}}\textnormal{\inlinedafny{sorted}}(a) \equiv \forall k, \ell \mid 0 \le k \le \ell < \abs{a} :: a[k] \le a[\ell]\end{array} \tag{Pre} \label{eq:Pre}\\\\
+&\begin{array}{l}
 \phantom{{} \land {}} 0 \le i \le j+1 \le \abs{a} \\ {} \land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\ {} \land \forall q, x \mid j < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s
-\end{array}\tag{I}
+\end{array}\tag{I} \label{eq:I}\\\\
+&\begin{array}{l}
+\phantom{{} \land \lnot} \textnormal{\inlinedafny{found}} \implies 0 \le i \le j < \abs{a} \land a[i] + a[j] = s \\ {} \land \lnot\textnormal{\inlinedafny{found}} \iff \forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s
+\end{array}\tag{Post} \label{eq:Post}
 \end{align*}
 \subsection{Précondition jusqu'à l'entrée de la boucle}
-\noindent\begin{minipage}[c]{0.5\textwidth}
+\noindent\begin{minipage}[c]{0.35\textwidth}
 \centering
 \begin{figure}[H]
 	\centering
-	\includesvg[width=0.3\textwidth]{simplepath1}
-	\caption*{@Pre $\to$ @I.}
+	\includesvg[width=0.6\textwidth]{simplepath1}
+	\caption{@\ref{eq:Pre} $\to$ @\ref{eq:I}.}
 	\label{fig:1}
 \end{figure}
 \end{minipage}%
-\begin{minipage}[c]{0.5\textwidth}
+\begin{minipage}[c]{0.65\textwidth}
+\begin{proof}
 \begin{align*}
-&\Big[\textnormal{Pre} \Big] \\
+&\Big[\textnormal{\ref{eq:Pre}} \Big] \\
 &\Big[0 \le 0 \le \abs{a} - 1 +1 \le \abs{a} \\
 &\land \forall p, x \mid 0 \le p < 0 \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
 &\land \forall q, x \mid \abs{a} - 1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s\Big] \\
 &\textnormal{\inlinedafny{i, j := 0, |a| - 1;}} \\
-&\Big[\textnormal{I} \Big]
+&\Big[\textnormal{\ref{eq:I}} \Big]
 \end{align*}
 Afin d'affirmer la correction de ce chemin simple, on doit encore prouver que le deuxième prédicat est bien une conséquence de la précondition.
-\begin{proof}
 On peut simplifier ce deuxième prédicat pour montrer qu'il est en fait équivalent à $\top$.
 Il est donc toujours impliqué par la précondition.
 \end{proof}
 \end{minipage}
 \subsection{Boucle dans le cas $m > s$}
-\noindent\begin{minipage}[c]{0.5\textwidth}
+\noindent\begin{minipage}[c]{0.35\textwidth}
 \centering
 \begin{figure}[H]
 	\centering
-	\includesvg[width=0.3\textwidth]{simplepath2}
-	\caption*{@I $\to$ @I pour $m > s$.}
+	\includesvg[width=0.6\textwidth]{simplepath2}
+	\caption{@\ref{eq:I} $\to$ @\ref{eq:I} pour $m > s$.}
 	\label{fig:2}
 \end{figure}
 \end{minipage}%
-\begin{minipage}[c]{0.5\textwidth}
+\begin{minipage}[c]{0.65\textwidth}
+\begin{proof}
 \begin{align*}
-&\Big[\textnormal{I} \Big] \\
+&\Big[\textnormal{\ref{eq:I}} \Big] \\
 &\Big[i \le j \implies \big(a[i] + a[j] > s \implies \textnormal{I}_2\big) \Big] \\
 &\textnormal{\inlinedafny{assume i <= j;}} \\
 &\Big[a[i] + a[j] > s \implies \textnormal{I}_2 \Big] \\
@@ -169,19 +161,18 @@ Il est donc toujours impliqué par la précondition.
 &\land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
 &\land \forall q, x \mid j-1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
 &\textnormal{\inlinedafny{j := j - 1;}} \\
-&\Big[\textnormal{I} \Big]
+&\Big[\textnormal{\ref{eq:I}} \Big]
 \end{align*}
 Pour montrer que l'invariant implique bien le deuxième prédicat,
 on doit prouver que
 \begin{align*}
-&\Big(\textnormal{I} \implies \Big[i \le j \implies \big(a[i] + a[j] > s \implies \textnormal{I}_2\big) \Big]\Big) \\
-\equiv &\Big[\textnormal{I} \land i \le j \land a[i] + a[j] > s\Big] \implies \textnormal{I}_2\,.
+&\Big(\textnormal{\ref{eq:I}} \implies \Big[i \le j \implies \big(a[i] + a[j] > s \implies \textnormal{I}_2\big) \Big]\Big) \\
+\equiv &\Big[\textnormal{\ref{eq:I}} \land i \le j \land a[i] + a[j] > s\Big] \implies \textnormal{I}_2\,.
 \end{align*}
-\begin{proof}
 Pour ne pas trop surcharger les équations, on procède partie par partie.
-Dans l'invariant I, la première partie de la conjonction devient $0 \le i < j \le \abs{a}$,
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction devient $0 \le i < j \le \abs{a}$,
 car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
-La deuxième partie de la conjonction est exactement la même dans I et I$_2$,
+La deuxième partie de la conjonction est exactement la même dans \ref{eq:I} et I$_2$,
 et ne nécessite donc pas de développement.
 Pour la troisième partie, elle est identique sauf dans le cas $q = j$.
 Dans ce cas, comme on a également que $a[i] + a[j] > s$,
@@ -192,23 +183,24 @@ Dans notre cas de figure, il suffit de prendre $x = j$ pour prouver qu'on n'aura
 \end{minipage}
 
 \subsection{Boucle dans le cas $m < s$}
-\noindent\begin{minipage}[c]{0.5\textwidth}
+\noindent\begin{minipage}[c]{0.35\textwidth}
 \centering
 \begin{figure}[H]
 	\centering
-	\includesvg[width=0.3\textwidth]{simplepath3}
-	\caption*{@I $\to$ @I pour $m < s$.}
+	\includesvg[width=0.6\textwidth]{simplepath3}
+	\caption{@\ref{eq:I} $\to$ @\ref{eq:I} pour $m < s$.}
 	\label{fig:3}
 \end{figure}
 \end{minipage}%
-\begin{minipage}[c]{0.5\textwidth}
+\begin{minipage}[c]{0.65\textwidth}
+\begin{proof}
 \begin{align*}
-&\Big[\textnormal{I} \Big] \\
+&\Big[\textnormal{\ref{eq:I}} \Big] \\
 &\Big[i \le j \implies \big(a[i] + a[j] < s \implies \textnormal{I}_3\big) \Big] \\
 &\textnormal{\inlinedafny{assume i <= j;}} \\
 &\Big[a[i] + a[j] < s \implies \textnormal{I}_3 \Big] \\
 &\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
-&\Big[\big(\lnot(m > s) \implies (m < s \implies \textnormal{I}_3)\big) \equiv \big(m < s \implies \textnormal{I}_3\big)\Big] \\
+&\Big[\big(\lnot(m > s) \implies (m < s \implies \textnormal{I}_3)\big)\Big] \equiv \Big[\big(m < s \implies \textnormal{I}_3\big)\Big] \\
 &\textnormal{\inlinedafny{assume !(m > s);}} \\
 &\Big[m < s \implies \textnormal{I}_3 \Big] \\
 &\textnormal{\inlinedafny{assume m < s;}} \\
@@ -216,19 +208,18 @@ Dans notre cas de figure, il suffit de prendre $x = j$ pour prouver qu'on n'aura
 &\land \forall p, x \mid 0 \le p < i + 1 \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
 &\land \forall q, x \mid j < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
 &\textnormal{\inlinedafny{i := i +1;}}\\
-&\Big[\textnormal{I} \Big]
+&\Big[\textnormal{\ref{eq:I}} \Big]
 \end{align*}
 Pour montrer que l'invariant implique bien le deuxième prédicat,
 on doit prouver que
 \begin{align*}
-&\Big(\textnormal{I} \implies \Big[i \le j \implies \big(a[i] + a[j] < s \implies \textnormal{I}_3\big) \Big]\Big) \\
-\equiv &\Big[\textnormal{I} \land i \le j \land a[i] + a[j] < s\Big] \implies \textnormal{I}_3\,.
+&\Big(\textnormal{\ref{eq:I}} \implies \Big[i \le j \implies \big(a[i] + a[j] < s \implies \textnormal{I}_3\big) \Big]\Big) \\
+\equiv &\Big[\textnormal{\ref{eq:I}} \land i \le j \land a[i] + a[j] < s\Big] \implies \textnormal{I}_3\,.
 \end{align*}
-\begin{proof}
 Pour ne pas trop surcharger les équations, on procède partie par partie.
-Dans l'invariant I, la première partie de la conjonction devient $0 \le i < j \le \abs{a}$,
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction devient $0 \le i < j \le \abs{a}$,
 car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
-La troisième partie de la conjonction est exactement la même dans I et I$_3$,
+La troisième partie de la conjonction est exactement la même dans \ref{eq:I} et I$_3$,
 et ne nécessite donc pas de développement.
 Pour la deuxième partie, elle est identique sauf dans le cas $p = i$.
 Dans ce cas, comme on a également que $a[i] + a[j] < s$,
@@ -238,8 +229,156 @@ Dans notre cas de figure, il suffit de prendre $x = i$ pour prouver qu'on n'aura
 \end{proof}
 \end{minipage}
 
+\subsection{Entrée de la boucle jusqu'à la sortie dans le cas $a[i] + a[j] = s$}
+\noindent\begin{minipage}[c]{0.35\textwidth}
+\centering
+\begin{figure}[H]
+	\centering
+	\includesvg[width=0.6\textwidth]{simplepath4}
+	\caption{@\ref{eq:I} $\to$ @\ref{eq:Post} pour $a[i] + a[j] = s$.}
+	\label{fig:4}
+\end{figure}
+\end{minipage}%
+\begin{minipage}[c]{0.65\textwidth}
+\begin{proof}
+\begin{align*}
+&\Big[\textnormal{\ref{eq:I}} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] = s \implies  \textnormal{Post}_2  \big) \Big] \\
+&\textnormal{\inlinedafny{assume i <= j;}} \\
+&\Big[a[i] + a[j] = s \implies  \textnormal{Post}_2 \Big] \\
+&\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
+&\Big[\lnot (m > s) \implies \big(\lnot (m < s) \implies  \textnormal{Post}_2  \big)\Big] \equiv \Big[(m = s) \implies  \textnormal{Post}_2 \Big] \\
+&\textnormal{\inlinedafny{assume !(m>s);}} \\
+&\Big[\lnot (m < s) \implies \textnormal{Post}_2 \Big] \\
+&\textnormal{\inlinedafny{assume !(m<s);}} \\
+&\Big[\textnormal{Post}_2 \Big] \equiv \Big[\top \implies 0 \le i \le j < \abs{a} \land a[i] + a[j] = s \\
+&\land \lnot \top \iff \forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s \Big] \\
+&\textnormal{\inlinedafny{found := true;}} \\
+&\Big[\textnormal{\ref{eq:Post}}\Big]
+\end{align*}
+Pour montrer que l'invariant implique bien le deuxième prédicat,
+on doit prouver que
+\begin{align*}
+&\Big(\textnormal{\ref{eq:I}} \implies \Big[i \le j \implies \big(a[i] + a[j] = s \implies \textnormal{Post}_2\big) \Big]\Big) \\
+\equiv &\Big[\textnormal{\ref{eq:I}} \land i \le j \land a[i] + a[j] = s\Big] \implies \textnormal{Post}_2\,.
+\end{align*}
+Pour ne pas trop surcharger les équations, on procède partie par partie.
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction devient $0 \le i < j \le \abs{a}$,
+car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
+Le prédicat Post$_2$ peut être réécrit comme
+\begin{align*}
+\textnormal{Post}_2 \equiv&\,\Big(0 \le i \le j < \abs{a} \land a[i] + a[j] = s\Big)\\
+\land&\,\Big(\exists m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] = s\Big)\,.
+\end{align*}
+On voit donc que la condition $a[i] + a[j] = s$ est réapparaît également.
+Finalement, on prend le cas $m = i$, $n = j$, ce qui représente la deuxième partie de Post$_2$.
+ On a donc bien prouvé que l'invariant est une conséquence de la plus faible précondition de ce tableau.
+\end{proof}
+\end{minipage}
 
-\begin{thebibliography}{00}
-	\bibitem{robtex} \url{https://www.robtex.com/dns-lookup/www.aliexpress.com}, accessed on December 1, 2018.
-\end{thebibliography}
+\subsection{Entrée de la boucle jusqu'à la sortie dans le cas $a[i] + a[j] \ne s$}
+\noindent\begin{minipage}[c]{0.35\textwidth}
+\centering
+\begin{figure}[H]
+	\centering
+	\includesvg[width=0.6\textwidth]{simplepath5}
+	\caption{@\ref{eq:I} $\to$ @\ref{eq:Post} pour $a[i] + a[j] \ne s$.}
+	\label{fig:5}
+\end{figure}
+\end{minipage}%
+\begin{minipage}[c]{0.65\textwidth}
+\begin{proof}
+\begin{align*}
+&\Big[\textnormal{\ref{eq:I}} \Big] \\
+&\Big[\lnot(i \le j) \implies \textnormal{Post}_3 \Big] \equiv \Big[i > j \implies \textnormal{Post}_3 \Big] \\
+&\textnormal{\inlinedafny{assume !(i <= j);}} \\
+&\Big[\textnormal{Post}_3 \Big] \equiv \Big[\bot \implies 0 \le i \le j < \abs{a} \land a[i] + a[j] = s \\
+&\land \lnot \bot \iff \forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s \Big] \\
+&\textnormal{\inlinedafny{found := false;}} \\
+&\Big[\textnormal{\ref{eq:Post}}\Big]
+\end{align*}
+Pour montrer que l'invariant implique bien le deuxième prédicat,
+on doit prouver que
+\begin{align*}
+&\Big(\textnormal{\ref{eq:I}} \implies \Big[i > j \implies \textnormal{Post}_3 \Big]\Big) \\
+\equiv &\Big[\textnormal{\ref{eq:I}} \land i > j \Big] \implies \textnormal{Post}_3\,.
+\end{align*}
+Pour ne pas trop surcharger les équations, on procède partie par partie.
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction devient $j < i \le j + 1 \le \abs{a}$, et donc $i = j + 1$.
+On peut alors réécrire l'invariant (qui est en réalité devenu $\textnormal{\ref{eq:I}} \land i > j$) comme
+\begin{align*}
+&{-1} \le j < i = j+1 \le \abs{a} \\
+\land\,&\forall p, x \mid 0 \le p < j+1 \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
+\land\,&\forall q, x \mid j < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \\
+\equiv\,& {-1} \le j < i = j+1 \le \abs{a} \\
+\land\,&\forall x, y \mid 0 \le y < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[y] \ne s\,.
+\end{align*}
+On réécrit aussi le prédicat Post$_3$, comme suit:
+\[
+\textnormal{Post}_3 \equiv \Big(\forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s\Big)\,.
+\]
+On remarque bien que $\textnormal{\ref{eq:I}} \land i > j \implies \textnormal{Post}_3$,
+ce qui conclut la preuve.
+\end{proof}
+\end{minipage}
+\section{Preuve de terminaison}
+\label{sec:term}
+Afin de montrer que le programme se termine, il faut montrer que le variant diminue à chaque itération.
+On choisit ici le variant $j-i$.
+Pour faire ceci, on distingue trois cas:
+\begin{itemize}
+	\item la valeur de $a[i] + a[j] = m > s$;
+	\item la valeur de $a[i] + a[j] = m < s$;
+	\item la valeur de $a[i] + a[j] = m = s$.
+\end{itemize}
+Dans les deux premiers cas, on démontre relativement facilement que le variant diminue d'une unité à chaque itération, alors que dans le troisième cas, le programme se termine immédiatement, peu importe la valeur du variant.
+On se limitera donc à la preuve des deux premiers cas.
+\subsection{Évolution du variant dans le cas $m > s$}
+Dans ce cas, montré à la \textsc{Figure}~\ref{fig:2},
+l'évolution du variant au cours de l'exécution est ajoutée aux tableau d'assertions déjà donné.
+\begin{align*}
+&\Big[\textnormal{\ref{eq:I}} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] > s \implies j - i = V_0 \land \textnormal{I}_2\big) \Big] \\
+&\textnormal{\inlinedafny{assume i <= j;}} \\
+&\Big[a[i] + a[j] > s \implies j - i = V_0 \land \textnormal{I}_2 \Big] \\
+&\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
+&\Big[m > s \implies j - i > = V_0 \land \textnormal{I}_2 \Big] \\
+&\textnormal{\inlinedafny{assume m > s;}} \\
+&\Big[j - 1 - i = V_0 \land \textnormal{I}_2\Big] \equiv \Big[j - i = V_0 \land 0 \le i \le j \le \abs{a} \\
+&\land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
+&\land \forall q, x \mid j-1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
+&\textnormal{\inlinedafny{j := j - 1;}} \\
+&\Big[j - i < V_0 \land \textnormal{\ref{eq:I}} \Big]
+\end{align*}
+On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
+Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$,
+le programme doit se terminer après un nombre fini d'étapes.
+
+\subsection{Évolution du variant dans le cas $m < s$}
+Dans ce cas, montré à la \textsc{Figure}~\ref{fig:2},
+l'évolution du variant au cours de l'exécution est ajoutée aux tableau d'assertions déjà donné.
+\begin{align*}
+&\Big[\textnormal{\ref{eq:I}} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] < s \implies j - i = V_0 \land \textnormal{I}_3\big) \Big] \\
+&\textnormal{\inlinedafny{assume i <= j;}} \\
+&\Big[a[i] + a[j] < s \implies j - i = V_0 \land \textnormal{I}_3 \Big] \\
+&\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
+&\Big[\big(\lnot(m > s) \implies (m < s \implies j - i >= V_0 \land \textnormal{I}_3)\big) \Big] \equiv \Big[m < s \implies j - i = V_0 \land I_3 \Big]\\
+&\textnormal{\inlinedafny{assume !(m > s);}} \\
+&\Big[m < s \implies j - i = V_0 \land \textnormal{I}_3 \Big] \\
+&\textnormal{\inlinedafny{assume m < s;}} \\
+&\Big[j - 1 - i = V_0 \land \textnormal{I}_3\Big] \equiv \Big[j - i = V_0 \land 0 \le i \le j \le \abs{a} \\
+&\land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
+&\land \forall q, x \mid j-1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
+&\textnormal{\inlinedafny{j := j - 1;}} \\
+&\Big[j - i < V_0 \land \textnormal{\ref{eq:I}} \Big]
+\end{align*}
+On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
+Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$,
+le programme doit se terminer après un nombre fini d'étapes.
+
+\section{Conclusion}
+Comme nous avons prouvé à la \textsc{Section}~\ref{sec:graph} que les différents chemins d'exécution sont corrects, et que nous avons prouvé à la \textsc{Section}~\ref{sec:term} que le programme se termine après un nombre fini d'étapes, on a ainsi prouvé la correction totale de l'algorithme.
+
+C'est grâce à la garantie du variant d'ailleurs qu'il est possible d'affirmer que le temps d'exécution de l'algorithme est linéaire en la taille du tableau.
 \end{document}
