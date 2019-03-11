@@ -56,16 +56,16 @@ Si oui, alors le programme doit renvoyer \og \inlinedafny{true} \fg, ainsi que l
 
 Notre algorithme fonctionne en temps linéaire ($\mathcal{O}(n)$), en utilisant deux pointeurs:
 le premier commence au premier élément du tableau, alors que le deuxième commence à la fin.
-Tant que le premier pointeur est plus petit ou égal au second, on évalue leur somme à chaque itération:
+On évalue leur somme à chaque itération, tant que le premier pointeur est plus bas ou équivalent au second:
 \begin{itemize}
 	\item si celle-ci est plus petite que $s$, on avance d'une unité le premier pointeur;
 	\item si celle-ci est plus grande que $s$, on recule d'une unité le deuxième pointeur et
 	\item si celle-ci est égale à $s$, on retourne la valeur des indices ainsi que la valeur \og \inlinedafny{true}\fg.
 \end{itemize}
 L'algorithme peut donc se terminer de deux façons: soit il trouve une paire d'indices qui satisfait la condition, passant donc dans la troisième possibilité ci-dessus,
-soit les pointeurs se croisent, ce qui signifie que la séquence ne contient pas de paire satisfaisant la condition.
+soit un pointeur dépasse l'autre, ce qui signifie que la séquence ne contient pas de paire satisfaisant la condition. % 'les pointeurs se croisent' c'est tricky car en i=j ils se croisent je pense...
 
-\section{Spécification formelle}
+\section{Spécifications formelles}
 \subsection{Précondition}
 La précondition est que la séquence soit triée.
 Formellement, on demande que
@@ -178,7 +178,7 @@ Pour la troisième partie, elle est identique sauf dans le cas $q = j$.
 Dans ce cas, comme on a également que $a[i] + a[j] > s$,
 et que le tableau est trié, le seul moyen d'obtenir $a[i] + a[j] = s$ avec $a[j]$ fixé serait de prendre un élément $a[p] < a[i]$, avec donc $0 \le p < i$, comme le tableau est trié.
 Or, par la deuxième partie de la conjonction de l'invariant, on sait que $\forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s$.
-Dans notre cas de figure, il suffit de prendre $x = j$ pour prouver qu'on n'aura jamais $a[p] + a[j] = s$ pour $0 \le 0 p < i$.
+Dans notre cas de figure, il suffit de prendre $x = j$ pour prouver qu'on n'aura jamais $a[p] + a[j] = s$ pour $0 \le p < i$.
 \end{proof}
 \end{minipage}
 
@@ -223,8 +223,8 @@ La troisième partie de la conjonction est exactement la même dans \ref{eq:I} e
 et ne nécessite donc pas de développement.
 Pour la deuxième partie, elle est identique sauf dans le cas $p = i$.
 Dans ce cas, comme on a également que $a[i] + a[j] < s$,
-et que le tableau est trié, le seul moyen d'obtenir $a[i] + a[j] = s$ avec $a[i]$ fixé serait de prendre un élément $a[q] > a[j]$, avec donc $j  < p < \abs{a}$, comme le tableau est trié.
-Or, par la troisième partie de la conjonction de l'invariant, on sait que $\forall q, x \mid j < p < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s$.
+et que le tableau est trié, le seul moyen d'obtenir $a[i] + a[j] = s$ avec $a[i]$ fixé serait de prendre un élément $a[q] > a[j]$, avec donc $j  < q < \abs{a}$, comme le tableau est trié.
+Or, par la troisième partie de la conjonction de l'invariant, on sait que $\forall q, x \mid j < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s$.
 Dans notre cas de figure, il suffit de prendre $x = i$ pour prouver qu'on n'aura jamais $a[i] + a[q] = s$ pour $j < q < \abs{a}$.
 \end{proof}
 \end{minipage}
@@ -270,7 +270,7 @@ Le prédicat Post$_2$ peut être réécrit comme
 \textnormal{Post}_2 \equiv&\,\Big(0 \le i \le j < \abs{a} \land a[i] + a[j] = s\Big)\\
 \land&\,\Big(\exists m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] = s\Big)\,.
 \end{align*}
-On voit donc que la condition $a[i] + a[j] = s$ est réapparaît également.
+On voit donc que la condition $a[i] + a[j] = s$ réapparaît également.
 Finalement, on prend le cas $m = i$, $n = j$, ce qui représente la deuxième partie de Post$_2$.
  On a donc bien prouvé que l'invariant est une conséquence de la plus faible précondition de ce tableau.
 \end{proof}
@@ -333,52 +333,49 @@ Pour faire ceci, on distingue trois cas:
 \end{itemize}
 Dans les deux premiers cas, on démontre relativement facilement que le variant diminue d'une unité à chaque itération, alors que dans le troisième cas, le programme se termine immédiatement, peu importe la valeur du variant.
 On se limitera donc à la preuve des deux premiers cas.
+Comme montré au cours, il faudra donc pour chaque chemin simple $@L_i'S@L_j'$ prouver $[P_i \land V_i = v_0]\ S\ [V_j < v_0]$.
 \subsection{Évolution du variant dans le cas $m > s$}
 Dans ce cas, montré à la \textsc{Figure}~\ref{fig:2},
 l'évolution du variant au cours de l'exécution est ajoutée aux tableau d'assertions déjà donné.
 \begin{align*}
-&\Big[\textnormal{\ref{eq:I}} \Big] \\
-&\Big[i \le j \implies \big(a[i] + a[j] > s \implies j - i = V_0 \land \textnormal{I}_2\big) \Big] \\
+&\Big[j - i = V_0 \land \textnormal{\ref{eq:I}} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] > s \implies j - 1 - i < V_0\big) \Big] \\
 &\textnormal{\inlinedafny{assume i <= j;}} \\
-&\Big[a[i] + a[j] > s \implies j - i = V_0 \land \textnormal{I}_2 \Big] \\
+&\Big[a[i] + a[j] > s \implies j - 1 - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
-&\Big[m > s \implies j - i > = V_0 \land \textnormal{I}_2 \Big] \\
+&\Big[m > s \implies j - 1 - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{assume m > s;}} \\
-&\Big[j - 1 - i = V_0 \land \textnormal{I}_2\Big] \equiv \Big[j - i = V_0 \land 0 \le i \le j \le \abs{a} \\
-&\land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
-&\land \forall q, x \mid j-1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
+&\Big[j - 1 - i < V_0  \Big] \\
 &\textnormal{\inlinedafny{j := j - 1;}} \\
-&\Big[j - i < V_0 \land \textnormal{\ref{eq:I}} \Big]
+&\Big[j - i < V_0 \Big]
 \end{align*}
-On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
-Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$,
+On a bien $j - 1 - i < j - i$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
+Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$ (on a en fait $j - i \geq -1$),
 le programme doit se terminer après un nombre fini d'étapes.
 
 \subsection{Évolution du variant dans le cas $m < s$}
 Dans ce cas, montré à la \textsc{Figure}~\ref{fig:2},
 l'évolution du variant au cours de l'exécution est ajoutée aux tableau d'assertions déjà donné.
 \begin{align*}
-&\Big[\textnormal{\ref{eq:I}} \Big] \\
-&\Big[i \le j \implies \big(a[i] + a[j] < s \implies j - i = V_0 \land \textnormal{I}_3\big) \Big] \\
+&\Big[j - i = V_0 \land \textnormal{\ref{eq:I}} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] < s \implies j - 1 - i < V_0\big) \Big] \\
 &\textnormal{\inlinedafny{assume i <= j;}} \\
-&\Big[a[i] + a[j] < s \implies j - i = V_0 \land \textnormal{I}_3 \Big] \\
+&\Big[a[i] + a[j] < s \implies j - 1 - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
-&\Big[\big(\lnot(m > s) \implies (m < s \implies j - i >= V_0 \land \textnormal{I}_3)\big) \Big] \equiv \Big[m < s \implies j - i = V_0 \land I_3 \Big]\\
+&\Big[\big(\lnot(m > s) \implies (m < s \implies j -1 - i < V_0\big) \Big] \equiv \Big[m < s \implies j - 1 - i < V_0 \Big]\\
 &\textnormal{\inlinedafny{assume !(m > s);}} \\
-&\Big[m < s \implies j - i = V_0 \land \textnormal{I}_3 \Big] \\
+&\Big[m < s \implies j - 1 - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{assume m < s;}} \\
-&\Big[j - 1 - i = V_0 \land \textnormal{I}_3\Big] \equiv \Big[j - i = V_0 \land 0 \le i \le j \le \abs{a} \\
-&\land \forall p, x \mid 0 \le p < i \land 0 \le x < \abs{a} :: a[p] + a[x] \ne s \\
-&\land \forall q, x \mid j-1 < q < \abs{a} \land 0 \le x < \abs{a} :: a[x] + a[q] \ne s \Big] \\
+&\Big[j - 1 - i < V_0 \Big]\\ % On peut pas changer en = !!!, on doit juste remplacer par les diff valeurs, pas mettre =
 &\textnormal{\inlinedafny{j := j - 1;}} \\
-&\Big[j - i < V_0 \land \textnormal{\ref{eq:I}} \Big]
+&\Big[j - i < V_0 \Big]% on ne met pas le I, cf. slide 55 CM4 ou même 47 ou c'est formellement mis.
 \end{align*}
-On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
-Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$,
+On a bien $j -1 - i < j - i$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
+Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$ (on a en fait $j - i \geq -1$),
 le programme doit se terminer après un nombre fini d'étapes.
 
 \section{Conclusion}
 Comme nous avons prouvé à la \textsc{Section}~\ref{sec:graph} que les différents chemins d'exécution sont corrects, et que nous avons prouvé à la \textsc{Section}~\ref{sec:term} que le programme se termine après un nombre fini d'étapes, on a ainsi prouvé la correction totale de l'algorithme.
 
-C'est grâce à la garantie du variant d'ailleurs qu'il est possible d'affirmer que le temps d'exécution de l'algorithme est linéaire en la taille du tableau.
+C'est grâce à la garantie de diminution du variant d'ailleurs qu'il est possible d'affirmer que le temps d'exécution de l'algorithme est linéaire en la taille de la séquence d'entiers.
 \end{document}
