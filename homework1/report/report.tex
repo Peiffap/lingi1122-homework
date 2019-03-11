@@ -177,8 +177,8 @@ on doit prouver que
 \equiv &\Big[\textnormal{\ref{eq:I}} \land i \le j \land a[i] + a[j] > s\Big] \implies \textnormal{I}_2\,.
 \end{align*}
 Pour ne pas trop surcharger les équations, on procède partie par partie.
-Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i +1 \le j+1 \le \abs{a}$,
-car $(i \le j+1) \land (i \le j) \implies i+1 \le j+1$.
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i \le j \le \abs{a}$,
+car $(i \le j+1) \land (i \le j) \implies i \le j$.
 La deuxième partie de la conjonction est exactement la même dans \ref{eq:I} et I$_2$,
 et ne nécessite donc pas de développement.
 Pour la troisième partie, elle est identique sauf dans le cas $q = j$.
