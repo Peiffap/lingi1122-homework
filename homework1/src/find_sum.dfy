@@ -8,6 +8,7 @@ ensures !found <==> (forall m, n | 0 <= m <= n < |a| :: a[m] + a[n] != s)
   invariant 0 <= i <= j+1 <= |a|
   invariant forall p, x | 0 <= p < i && 0 <= x < |a| :: a[p] + a[x] != s
   invariant forall q, x | j < q < |a| && 0 <= x < |a| :: a[x] + a[q] != s
+  decreases j - i
   {
     var m;
     m := a[i] + a[j];
