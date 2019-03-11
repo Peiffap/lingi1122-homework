@@ -41,7 +41,7 @@
 \author[add1]{Alexandre \textsc{Gobeaux}}
 \ead{alexandre.gobeaux@student.uclouvain.be}
 \author[add1]{Louis \textsc{Navarre}}
-\ead{louis.navarre@student.uclouvain.be}
+\ead{navarre.louis@student.uclouvain.be}
 \author[add1]{Gilles \textsc{Peiffer}}
 \ead{gilles.peiffer@student.uclouvain.be}
 
@@ -51,7 +51,7 @@ Ce document donne un algorithme pour résoudre le problème 2SUM ainsi qu'une pr
 \maketitle
 
 \section{Description du problème et de la solution}
-Le problème à résoudre est celui d'une séquence d'entiers triée $a$ dans laquelle il faut déterminer si oui ou non deux d'entre-eux (potentiellement deux fois le même) ont une somme égale à un entier prédéfini $s$.
+Le problème à résoudre est celui d'une séquence d'entiers triée $a$ dans laquelle il faut déterminer si oui ou non deux entrées définies par ces entiers (potentiellement deux fois la même) ont une somme égale à un entier prédéfini $s$.
 Si oui, alors le programme doit renvoyer \og \inlinedafny{true} \fg, ainsi que les indices des deux entiers qui satisfont la condition, sinon il renvoie \og \inlinedafny{false} \fg, et la valeur des indices n'a pas d'importance.
 
 Notre algorithme fonctionne en temps linéaire ($\mathcal{O}(n)$), en utilisant deux pointeurs:
@@ -60,7 +60,7 @@ On évalue leur somme à chaque itération, tant que le premier pointeur est plu
 \begin{itemize}
 	\item si celle-ci est plus petite que $s$, on avance d'une unité le premier pointeur;
 	\item si celle-ci est plus grande que $s$, on recule d'une unité le deuxième pointeur et
-	\item si celle-ci est égale à $s$, on retourne les valeurs ainsi que la valeur \og \inlinedafny{true}\fg.
+	\item si celle-ci est égale à $s$, on retourne la valeur des indices ainsi que la valeur \og \inlinedafny{true}\fg.
 \end{itemize}
 L'algorithme peut donc se terminer de deux façons: soit il trouve une paire d'indices qui satisfait la condition, passant donc dans la troisième possibilité ci-dessus,
 soit un pointeur dépasse l'autre, ce qui signifie que la séquence ne contient pas de paire satisfaisant la condition. % 'les pointeurs se croisent' c'est tricky car en i=j ils se croisent je pense...
