@@ -28,6 +28,10 @@
 	\let\@evenfoot\@oddfoot}
 \makeatother
 
+\makeatletter
+\def\blfootnote{\gdef\@thefnmark{}\@footnotetext}
+\makeatother
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \newcommand{\abs}[1]{\left\lvert#1\right\lvert}
@@ -40,8 +44,10 @@
 
 \author[add1]{Alexandre \textsc{Gobeaux}}
 \ead{alexandre.gobeaux@student.uclouvain.be}
+
 \author[add1]{Louis \textsc{Navarre}}
 \ead{navarre.louis@student.uclouvain.be}
+
 \author[add1]{Gilles \textsc{Peiffer}}
 \ead{gilles.peiffer@student.uclouvain.be}
 
@@ -52,7 +58,7 @@ Ce document donne un algorithme pour résoudre le problème 2SUM ainsi qu'une pr
 
 \section{Description du problème et de la solution}
 Le problème à résoudre est celui d'une séquence d'entiers triée $a$ dans laquelle il faut déterminer si oui ou non deux entrées définies par ces entiers (potentiellement deux fois la même) ont une somme égale à un entier prédéfini $s$.
-Si oui, alors le programme doit renvoyer \og \inlinedafny{true} \fg, ainsi que les indices des deux entiers qui satisfont la condition, sinon il renvoie \og \inlinedafny{false} \fg, et la valeur des indices n'a pas d'importance.
+Si oui, alors le programme doit renvoyer \og \inlinedafny{true} \fg, ainsi que les indices des deux entiers qui satisfont la condition, sinon il renvoie \og \inlinedafny{false} \fg, et la valeur des indices n'a pas d'importance.\blfootnote{\emph{NOMAs$\!\!$:} 42191600 (Alexandre \textsc{Gobeaux}), 12351600 (Louis \textsc{Navarre}), 24321600 (Gilles \textsc{Peiffer})}
 
 Notre algorithme fonctionne en temps linéaire ($\mathcal{O}(n)$), en utilisant deux pointeurs:
 le premier commence au premier élément du tableau, alors que le deuxième commence à la fin.
@@ -63,7 +69,7 @@ On évalue leur somme à chaque itération, tant que le premier pointeur est plu
 	\item si celle-ci est égale à $s$, on retourne la valeur des indices ainsi que la valeur \og \inlinedafny{true}\fg.
 \end{itemize}
 L'algorithme peut donc se terminer de deux façons: soit il trouve une paire d'indices qui satisfait la condition, passant donc dans la troisième possibilité ci-dessus,
-soit un pointeur dépasse l'autre, ce qui signifie que la séquence ne contient pas de paire satisfaisant la condition. % 'les pointeurs se croisent' c'est tricky car en i=j ils se croisent je pense...
+soit un pointeur dépasse l'autre, ce qui signifie que la séquence ne contient pas de paire satisfaisant la condition.
 
 \section{Spécifications formelles}
 \subsection{Précondition}
@@ -112,6 +118,7 @@ Avant de prouver la correction des différents chemins simples, définissons que
 \phantom{{} \land \lnot} \textnormal{\inlinedafny{found}} \implies 0 \le i \le j < \abs{a} \land a[i] + a[j] = s \\ {} \land \lnot\textnormal{\inlinedafny{found}} \iff \forall m, n \mid 0 \le m \le n < \abs{a} :: a[m] + a[n] \ne s
 \end{array}\tag{Post} \label{eq:Post}
 \end{align*}
+On a également démontré une équivalence logique souvent utilisée dans les preuves de correction (\ref{ann:om}).
 \subsection{Précondition jusqu'à l'entrée de la boucle}
 \noindent\begin{minipage}[c]{0.35\textwidth}
 \centering
@@ -170,8 +177,8 @@ on doit prouver que
 \equiv &\Big[\textnormal{\ref{eq:I}} \land i \le j \land a[i] + a[j] > s\Big] \implies \textnormal{I}_2\,.
 \end{align*}
 Pour ne pas trop surcharger les équations, on procède partie par partie.
-Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i < j \le \abs{a}$,
-car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i +1 \le j+1 \le \abs{a}$,
+car $(i \le j+1) \land (i \le j) \implies i+1 \le j+1$.
 La deuxième partie de la conjonction est exactement la même dans \ref{eq:I} et I$_2$,
 et ne nécessite donc pas de développement.
 Pour la troisième partie, elle est identique sauf dans le cas $q = j$.
@@ -217,8 +224,8 @@ on doit prouver que
 \equiv &\Big[\textnormal{\ref{eq:I}} \land i \le j \land a[i] + a[j] < s\Big] \implies \textnormal{I}_3\,.
 \end{align*}
 Pour ne pas trop surcharger les équations, on procède partie par partie.
-Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i < j \le \abs{a}$,
-car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i +1 \le j+1 \le \abs{a}$,
+car $(i \le j+1) \land (i \le j) \implies i+1 \le j+1$.
 La troisième partie de la conjonction est exactement la même dans \ref{eq:I} et I$_3$,
 et ne nécessite donc pas de développement.
 Pour la deuxième partie, elle est identique sauf dans le cas $p = i$.
@@ -263,8 +270,8 @@ on doit prouver que
 \equiv &\Big[\textnormal{\ref{eq:I}} \land i \le j \land a[i] + a[j] = s\Big] \implies \textnormal{Post}_2\,.
 \end{align*}
 Pour ne pas trop surcharger les équations, on procède partie par partie.
-Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i < j \le \abs{a}$,
-car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j \le \abs{a}$.
+Dans l'invariant \ref{eq:I}, la première partie de la conjonction permet d'obtenir $0 \le i \le j < \abs{a}$,
+car $(i \le j+1) \land (i \le j) \equiv i \le j$ et $j+1 \le \abs{a} \implies j < \abs{a}$.
 Le prédicat Post$_2$ peut être réécrit comme
 \begin{align*}
 \textnormal{Post}_2 \equiv&\,\Big(0 \le i \le j < \abs{a} \land a[i] + a[j] = s\Big)\\
@@ -272,7 +279,7 @@ Le prédicat Post$_2$ peut être réécrit comme
 \end{align*}
 On voit donc que la condition $a[i] + a[j] = s$ réapparaît également.
 Finalement, on prend le cas $m = i$, $n = j$, ce qui représente la deuxième partie de Post$_2$.
- On a donc bien prouvé que l'invariant est une conséquence de la plus faible précondition de ce tableau.
+ On a donc bien prouvé que la plus faible précondition de ce tableau est une conséquence de l'invariant.
 \end{proof}
 \end{minipage}
 
@@ -354,23 +361,23 @@ Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \i
 le programme doit se terminer après un nombre fini d'étapes.
 
 \subsection{Évolution du variant dans le cas $m < s$}
-Dans ce cas, montré à la \textsc{Figure}~\ref{fig:2},
+Dans ce cas, montré à la \textsc{Figure}~\ref{fig:3},
 l'évolution du variant au cours de l'exécution est ajoutée aux tableau d'assertions déjà donné.
 \begin{align*}
 &\Big[j - i = V_0 \land \textnormal{\ref{eq:I}} \Big] \\
-&\Big[i \le j \implies \big(a[i] + a[j] < s \implies j - 1 - i < V_0\big) \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] < s \implies j - i - 1 < V_0\big) \Big] \\
 &\textnormal{\inlinedafny{assume i <= j;}} \\
-&\Big[a[i] + a[j] < s \implies j - 1 - i < V_0 \Big] \\
+&\Big[a[i] + a[j] < s \implies j - i - 1 < V_0 \Big] \\
 &\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
-&\Big[\big(\lnot(m > s) \implies (m < s \implies j -1 - i < V_0\big) \Big] \equiv \Big[m < s \implies j - 1 - i < V_0 \Big]\\
+&\Big[\big(\lnot(m > s) \implies (m < s \implies j - i - 1 < V_0\big) \Big] \equiv \Big[m < s \implies j - i - 1 < V_0 \Big]\\
 &\textnormal{\inlinedafny{assume !(m > s);}} \\
-&\Big[m < s \implies j - 1 - i < V_0 \Big] \\
+&\Big[m < s \implies j - i - 1 < V_0 \Big] \\
 &\textnormal{\inlinedafny{assume m < s;}} \\
-&\Big[j - 1 - i < V_0 \Big]\\ % On peut pas changer en = !!!, on doit juste remplacer par les diff valeurs, pas mettre =
-&\textnormal{\inlinedafny{j := j - 1;}} \\
+&\Big[j - (i + 1) < V_0 \Big]\\ % On peut pas changer en = !!!, on doit juste remplacer par les diff valeurs, pas mettre =
+&\textnormal{\inlinedafny{i := i + 1;}} \\
 &\Big[j - i < V_0 \Big]% on ne met pas le I, cf. slide 55 CM4 ou même 47 ou c'est formellement mis.
 \end{align*}
-On a bien $j -1 - i < j - i$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
+On a bien $j - i - 1 < j - i$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
 Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$ (on a en fait $j - i \geq -1$),
 le programme doit se terminer après un nombre fini d'étapes.
 
@@ -378,4 +385,18 @@ le programme doit se terminer après un nombre fini d'étapes.
 Comme nous avons prouvé à la \textsc{Section}~\ref{sec:graph} que les différents chemins d'exécution sont corrects, et que nous avons prouvé à la \textsc{Section}~\ref{sec:term} que le programme se termine après un nombre fini d'étapes, on a ainsi prouvé la correction totale de l'algorithme.
 
 C'est grâce à la garantie de diminution du variant d'ailleurs qu'il est possible d'affirmer que le temps d'exécution de l'algorithme est linéaire en la taille de la séquence d'entiers.
+
+\appendix
+\section{Preuve omise}
+\label{ann:om}
+On montre ici que $A \implies B \implies C \equiv A \land B \implies C$.
+\begin{proof}
+\begin{align*}
+A \implies B \implies C &\equiv \lnot A \lor (B \implies C) \\
+&\equiv \lnot A \lor (\lnot B \lor C) \\
+&\equiv \lnot A \lor \lnot B \lor C \\
+&\equiv \lnot(A \land B) \lor C \\
+&\equiv A \land B \implies C\,.\qedhere
+\end{align*}
+\end{proof}
 \end{document}
