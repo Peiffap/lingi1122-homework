@@ -331,7 +331,7 @@ ce qui conclut la preuve.
 \section{Preuve de terminaison}
 \label{sec:term}
 Afin de montrer que le programme se termine, il faut montrer que le variant diminue à chaque itération.
-On choisit ici le variant $j-i$.
+On choisit ici le variant $j-i+1$ (pour qu'il soit toujours positif ou nul).
 Pour faire ceci, on distingue trois cas:
 \begin{itemize}
 	\item la valeur de $a[i] + a[j] = m > s$;
@@ -342,44 +342,48 @@ Dans les deux premiers cas, on démontre relativement facilement que le variant 
 On se limitera donc à la preuve des deux premiers cas.
 Comme montré au cours, il faudra donc pour chaque chemin simple $@L_i'S@L_j'$ prouver $[P_i \land V_i = v_0]\ S\ [V_j < v_0]$.
 \subsection{Évolution du variant dans le cas $m > s$}
+\begin{proof}
 Dans ce cas, montré à la \textsc{Figure}~\ref{fig:2},
 l'évolution du variant au cours de l'exécution est ajoutée aux tableau d'assertions déjà donné.
 \begin{align*}
-&\Big[j - i = V_0 \land \textnormal{\ref{eq:I}} \Big] \\
-&\Big[i \le j \implies \big(a[i] + a[j] > s \implies j - 1 - i < V_0\big) \Big] \\
+&\Big[j - i  + 1 = V_0 \land \textnormal{\ref{eq:I}} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] > s \implies j - i < V_0\big) \Big] \\
 &\textnormal{\inlinedafny{assume i <= j;}} \\
-&\Big[a[i] + a[j] > s \implies j - 1 - i < V_0 \Big] \\
+&\Big[a[i] + a[j] > s \implies j - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
-&\Big[m > s \implies j - 1 - i < V_0 \Big] \\
+&\Big[m > s \implies j - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{assume m > s;}} \\
-&\Big[j - 1 - i < V_0  \Big] \\
+&\Big[j - 1 - i + 1 < V_0  \Big] \\
 &\textnormal{\inlinedafny{j := j - 1;}} \\
-&\Big[j - i < V_0 \Big]
+&\Big[j - i + 1 < V_0 \Big]
 \end{align*}
-On a bien $j - 1 - i < j - i$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
-Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$ (on a en fait $j - i \geq -1$),
+On a bien $(j - i + 1)_\textnormal{initial} > (j - i + 1)_\textnormal{final}$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
+Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j - i + 1 = 0$ (on a en fait $j - i + 1 \ge 0$),
 le programme doit se terminer après un nombre fini d'étapes.
+\end{proof}
 
 \subsection{Évolution du variant dans le cas $m < s$}
+\begin{proof}
 Dans ce cas, montré à la \textsc{Figure}~\ref{fig:3},
 l'évolution du variant au cours de l'exécution est ajoutée aux tableau d'assertions déjà donné.
 \begin{align*}
-&\Big[j - i = V_0 \land \textnormal{\ref{eq:I}} \Big] \\
-&\Big[i \le j \implies \big(a[i] + a[j] < s \implies j - i - 1 < V_0\big) \Big] \\
+&\Big[j - i + 1 = V_0 \land \textnormal{\ref{eq:I}} \Big] \\
+&\Big[i \le j \implies \big(a[i] + a[j] < s \implies j - i < V_0\big) \Big] \\
 &\textnormal{\inlinedafny{assume i <= j;}} \\
-&\Big[a[i] + a[j] < s \implies j - i - 1 < V_0 \Big] \\
+&\Big[a[i] + a[j] < s \implies j - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{m := a[i] + a[j];}} \\
-&\Big[\big(\lnot(m > s) \implies (m < s \implies j - i - 1 < V_0\big) \Big] \equiv \Big[m < s \implies j - i - 1 < V_0 \Big]\\
+&\Big[\big(\lnot(m > s) \implies (m < s \implies j - i < V_0\big) \Big] \equiv \Big[m < s \implies j - i < V_0 \Big]\\
 &\textnormal{\inlinedafny{assume !(m > s);}} \\
-&\Big[m < s \implies j - i - 1 < V_0 \Big] \\
+&\Big[m < s \implies j - i < V_0 \Big] \\
 &\textnormal{\inlinedafny{assume m < s;}} \\
-&\Big[j - (i + 1) < V_0 \Big]\\ % On peut pas changer en = !!!, on doit juste remplacer par les diff valeurs, pas mettre =
+&\Big[j - (i + 1) + 1 < V_0 \Big]\\ % On peut pas changer en = !!!, on doit juste remplacer par les diff valeurs, pas mettre =
 &\textnormal{\inlinedafny{i := i + 1;}} \\
-&\Big[j - i < V_0 \Big]% on ne met pas le I, cf. slide 55 CM4 ou même 47 ou c'est formellement mis.
+&\Big[j - i + 1 < V_0 \Big]% on ne met pas le I, cf. slide 55 CM4 ou même 47 ou c'est formellement mis.
 \end{align*}
-On a bien $j - i - 1 < j - i$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
-Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j-i = -1$ (on a en fait $j - i \geq -1$),
+On a bien $(j - i + 1)_\textnormal{initial} > (j - i + 1)_\textnormal{final}$. On trouve donc bien que le variant à la sortie de la boucle est strictement plus petit que le variant en entrée.
+Comme on sait que la valeur minimale du variant est atteinte lorsque $i = j+1 \implies j - i + 1 = 0$ (on a en fait $j - i + 1 \ge 0$),
 le programme doit se terminer après un nombre fini d'étapes.
+\end{proof}
 
 \section{Conclusion}
 Comme nous avons prouvé à la \textsc{Section}~\ref{sec:graph} que les différents chemins d'exécution sont corrects, et que nous avons prouvé à la \textsc{Section}~\ref{sec:term} que le programme se termine après un nombre fini d'étapes, on a ainsi prouvé la correction totale de l'algorithme.
