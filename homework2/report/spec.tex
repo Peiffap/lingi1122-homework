@@ -1,0 +1,67 @@
+\documentclass{elsarticle}
+\usepackage[a4paper,left=2.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
+\usepackage{natbib}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools}
+\usepackage[french]{babel}
+\usepackage{bm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{../../dafny}
+\lstset{language=dafny}
+\graphicspath{{img/}}
+\usepackage{svg}
+
+\makeatletter
+\def\ps@pprintTitle{%
+	\let\@oddhead\@empty
+	\let\@evenhead\@empty
+	\def\@oddfoot{\centerline{\thepage}}%
+	\let\@evenfoot\@oddfoot}
+\makeatother
+
+\makeatletter
+\def\blfootnote{\gdef\@thefnmark{}\@footnotetext}
+\makeatother
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\newcommand{\abs}[1]{\left\lvert#1\right\lvert}
+\usepackage{siunitx}
+\begin{document}
+\title{Méthodes de conception de programmes \\ Devoir 2: 1, 2, 3\ldots{} Arbres!}
+\date{12 mars 2019}
+
+\address[add1]{École Polytechnique, Université catholique de Louvain, Place de l'Université 1, 1348 Ottignies-Louvain-la-Neuve, Belgique}
+
+\author[add1]{Alexandre \textsc{Gobeaux}}
+\ead{alexandre.gobeaux@student.uclouvain.be}
+
+\author[add1]{Louis \textsc{Navarre}}
+\ead{navarre.louis@student.uclouvain.be}
+
+\author[add1]{Gilles \textsc{Peiffer}}
+\ead{gilles.peiffer@student.uclouvain.be}
+
+\begin{abstract}
+Ce papier donne les invariants de représentation, la fonction d'abstraction et les spécifications des fonctions \inlinedafny|insert| et \inlinedafny|join| pour une implémentation des arbres 2-3 basée sur \cite{algs4th}.
+\end{abstract}
+\maketitle
+
+\section{Description du problème et de la solution}
+
+\section*{Références}
+
+\bibliography{ref}
+\bibliographystyle{elsarticle-harv}\biboptions{authoryear}
+
+\end{document}
+\endinput
