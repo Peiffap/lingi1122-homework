@@ -12,7 +12,7 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
         ret := Deux(Vide, i, Vide); // empty
         isSame := false;
     case Deux(left, val, right) => // It was a 2-tree
-        if (val > i)
+        if (val >= i)
         {
             var newLeft, cont := insert2(left, i);
             if(cont)
@@ -87,7 +87,7 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
                     isSame := false;
             }
         }
-        else if(i > valR)
+        else if(i >= valR)
         {
             var newRight, cont := insert2(right, i);
             if(cont)
