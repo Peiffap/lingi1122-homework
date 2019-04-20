@@ -1,7 +1,7 @@
 
 datatype Tree = Vide
-| Deux(Tree, int, Tree)
-| Trois(Tree, int, Tree, int, Tree)
+              | Deux(Tree, int, Tree)
+              | Trois(Tree, int, Tree, int, Tree)
 
 method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
     // Requires
@@ -15,7 +15,7 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
         if (val > i)
         {
             var newLeft, cont := insert2(left, i);
-            if(cont)
+            if (cont)
             {
                 ret := Deux(newLeft, val, right);
                 isSame := true;
@@ -35,10 +35,10 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
                     isSame := true;
             }
         }
-        else if(val < i)
+        else if (val < i)
         {
             var newRight, cont := insert2(right, i);
-            if(cont)
+            if (cont)
             {
                 ret := Deux(left, val, newRight);
                 isSame := true;
@@ -67,7 +67,7 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
         if (i < valL)
         {
             var newLeft, cont := insert2(left, i);
-            if(cont)
+            if (cont)
             {
                 ret := Trois(newLeft, valL, middle, valR, right);
                 isSame := true;
@@ -87,10 +87,10 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
                     isSame := false;
             }
         }
-        else if(i > valR)
+        else if (i > valR)
         {
             var newRight, cont := insert2(right, i);
-            if(cont)
+            if (cont)
             {
                 ret := Trois(left, valL, middle, valR, newRight);
                 isSame := true;
@@ -110,10 +110,10 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
                     isSame := false;
             }
         }
-        else if(valL < i && i < valR)
+        else if (valL < i && i < valR)
         {
             var newMiddle, cont := insert2(middle, i);
-            if(cont)
+            if (cont)
             {
                 ret := Trois(left, valL, newMiddle, valR, right);
                 isSame := true;
@@ -134,7 +134,8 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
                     isSame := false;
             }
         }
-        else{
+        else
+        {
             ret := t;
             isSame := true;
         }
