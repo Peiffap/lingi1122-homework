@@ -34,11 +34,25 @@
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
-\newcommand{\abs}[1]{\left\lvert#1\right\lvert}
 \usepackage{siunitx}
+
+\newcommand{\abs}{\ensuremath{\textnormal{\inlinedafny|abs|}}}
+
+\newcommand{\ok}{\ensuremath{\textnormal{\inlinedafny|ok|}}}
+
+\DeclareMathOperator{\size}{size}
+\DeclareMathOperator{\height}{height}
+\DeclareMathOperator{\type}{type}
+
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\theta}{\vartheta}
+\renewcommand{\kappa}{\varkappa}
+\renewcommand{\rho}{\varrho}
+\renewcommand{\phi}{\varphi}
+
 \begin{document}
 \title{Méthodes de conception de programmes \\ Devoir 2: 1, 2, 3\ldots{} Arbres!}
-\date{12 mars 2019}
+\date{30 avril 2019}
 
 \address[add1]{École Polytechnique, Université catholique de Louvain, Place de l'Université 1, 1348 Ottignies-Louvain-la-Neuve, Belgique}
 
@@ -52,11 +66,54 @@
 \ead{gilles.peiffer@student.uclouvain.be}
 
 \begin{abstract}
-Ce papier donne les invariants de représentation, la fonction d'abstraction et les spécifications des fonctions \inlinedafny|insert| et \inlinedafny|join| pour une implémentation des arbres 2-3 basée sur \cite{algs4th}.
+Ce papier donne les invariants de représentation, la fonction d'abstraction et les spécifications des fonctions \inlinedafny|insert| et \inlinedafny|join| pour une implémentation des arbres 2-3 basée sur \cite{algs4th} et \cite{wiki:23tree}.
 \end{abstract}
 \maketitle
 
-\section{Description du problème et de la solution}
+\section{Invariant de représentation}
+Commençons par définir quelques fonctions auxiliaires:
+\begin{itemize}
+	\item \(\size(T)\): donne le nombre de n\oe{}uds d'un arbre \(T\);
+	\item \(\height(T)\): donne la hauteur d'un arbre \(T\);
+	\item \(\type(T)\): donne le nombre de sours-arbres du n\oe{}ud source de l'arbre \(T\).
+\end{itemize}
+Afin d'alléger la notation de l'invariant de représentation \(\ok(T)\), voici quelques fonctions supplémentaires.
+\begin{itemize}
+	\item Si le n\oe{}ud source de \(T\) est un 2-n\oe{}ud, alors \(L\) et \(R\) dénotent respectivement le sous-arbre de gauche et de droite de \(T\), alors que \(a\) dénote la donnée de son n\oe{}ud source.
+	\item Si le n\oe{}ud source de \(T\) est un 3-n\oe{}ud, alors \(L\), \(M\) et \(R\) dénotent respectivement le sous-arbre de gauche, du milieu et de droite de \(T\), alors que \(a< b\) sont les données du n\oe{}ud source.
+\end{itemize}
+\begin{align}
+f(T) &= \Big(\size(L) > 0 \land \size(R) > 0\Big) \land \Big(\height(L) = \height(R)\Big) \land \Big(\forall \lambda \in L, \rho \in R : \lambda < a \le \rho \Big)\,,\\
+g(T) &= \begin{multlined}[t] \Big(\size(L) > 0 \land \size(M) > 0 \land \size(R) > 0\Big) \land \Big(\height(L) = \height(M) = \height(R)\Big) \land {}\\ \Big(\forall \lambda \in L, \mu \in M, \rho \in R : \lambda < a \le \mu < b \le \rho \Big)\,.
+\end{multlined}
+\end{align}
+
+L'invariant de représentation est alors donné par
+\begin{equation}
+\ok(T) \equiv \size(T) = 0 \lor (\type(T) = 2 \land f(T)) \lor  (\type(T) = 3 \land g(T))\,.
+\end{equation}
+
+\section{Fonction d'abstraction}
+La fonction d'abstraction \abs() est donnée par
+\begin{equation}
+\abs() = \,.
+\end{equation}
+
+\section{Spécifications formelles}
+\subsection{Spécification de \inlinedafny|insert|}
+\subsubsection{Précondition}
+
+\subsubsection{Modifies}
+
+\subsubsection{Postcondition}
+
+\subsection{Spécification de \inlinedafny|join|}
+\subsubsection{Précondition}
+
+\subsubsection{Modifies}
+
+\subsubsection{Postcondition}
+
 
 \section*{Références}
 
