@@ -9,13 +9,13 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
-%\usepackage{hyperref}
+\usepackage{hyperref}
 \usepackage{float}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{subcaption}
 \usepackage{listings}
-\usepackage{dafny}
+\usepackage{../../dafny}
 \lstset{language=dafny}
 \graphicspath{{img/}}
 \usepackage{svg}
@@ -99,7 +99,7 @@ L'implémentation de l'algorithme donné précédemment en Dafny est la suivante
 Le graphe d'exécution pour l'algorithme ci-dessus est donné sur la \textsc{Figure}~\ref{fig:execgraph}.
 \begin{figure}[htbp]
 	\centering
-	\includesvg[width=\textwidth]{execgraph_svg-tex}
+	\includegraphics[width=\textwidth]{svg-inkscape/execgraph_svg-tex.pdf}
 	\caption{Le graphe d'exécution complet pour le programme donné.}
 	\label{fig:execgraph}
 \end{figure}
