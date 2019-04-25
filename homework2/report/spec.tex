@@ -90,7 +90,7 @@ g(T) &= \begin{multlined}[t] \Big(\size(L) > 0 \land \size(M) > 0 \land \size(R)
 
 L'invariant de représentation est alors donné par
 \begin{equation}
-\ok(T) \equiv \size(T) = 0 \lor (\type(T) = 2 \land f(T)) \lor  (\type(T) = 3 \land g(T))\,.
+\ok(T) \equiv \size(T) = 0 \lor \Big(\type(T) = 2 \land f(T)\Big) \lor  \Big(\type(T) = 3 \land g(T)\Big)\,.
 \end{equation}
 
 \section{Fonction d'abstraction}
@@ -100,20 +100,35 @@ La fonction d'abstraction \abs() est donnée par
 \end{equation}
 
 \section{Spécifications formelles}
-\subsection{Spécification de \inlinedafny|insert|}
+\subsection{Spécification de \inlinedafny|insert(t: Tree, i: int) returns (t': Tree)|}
 \subsubsection{Précondition}
-
-\subsubsection{Modifies}
+La précondition est simplement que l'invariant de représentation soit respecté.
+\begin{dafny}
+@Pre $\equiv$ ok(t)
+\end{dafny}
 
 \subsubsection{Postcondition}
+Comme la fonction \inlinedafny|insert| doit conserver le rep-invariant, il fait également partie de la postcondition.
+En plus de cela, on requiert également que le multiensemble des éléments du nouvel arbre soit égal au multiensemble résultant de l'union de l'arbre original et de \inlinedafny|i|, où les multiensemble sont définis comme dans~\cite{blizard1991}.
+\begin{dafny}
+@Post $\equiv$ ok(t') $\land$ elements(t') $=$ elements(t) $\cup$ multiset(i)
+\end{dafny}
+Ici, \inlinedafny|elements| est une fonction qui prend en argument un arbre 2-3 et retourne le multiensemble de ses éléments.
 
-\subsection{Spécification de \inlinedafny|join|}
+\subsection{Spécification de \inlinedafny|join(t1: Tree, t2: Tree) returns (t: Tree)|}
 \subsubsection{Précondition}
-
-\subsubsection{Modifies}
+La fonction \inlinedafny|join| a comme précondition que les deux arbres pris en argument soient des arbres 2-3 valables.
+\begin{dafny}
+@Pre $\equiv$ ok(t1) $\land$ ok(t2)
+\end{dafny}
 
 \subsubsection{Postcondition}
-
+Le résultat de la fonction \inlinedafny|join| doit également être un arbre 2-3 valable.
+En plus de cela, on requiert également que le multiensemble des éléments du nouvel arbre soit égal au multiensemble résultant de l'union des deux arbres initiaux.
+\begin{dafny}
+@Post $\equiv$ ok(t) $\land$ elements(t) $=$ elements(t1) $\cup$ elements(t2)
+\end{dafny}
+La fonction \inlinedafny|elements| est la même que pour \inlinedafny|insert|.
 
 \section*{Références}
 
