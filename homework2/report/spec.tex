@@ -36,13 +36,16 @@
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \usepackage{siunitx}
 
-\newcommand{\abs}{\ensuremath{\textnormal{\inlinedafny|abs|}}}
+\newcommand{\abs}{\ensuremath{\textnormal{abs}_{\textnormal{Arbre 2-3}}}}
 
-\newcommand{\ok}{\ensuremath{\textnormal{\inlinedafny|ok|}}}
+\newcommand{\ok}{\ensuremath{\textnormal{ok}_{\textnormal{Arbre 2-3}}}}
+
+\newcommand{\seq}[1]{\big\langle #1 \big\rangle}
 
 \DeclareMathOperator{\size}{size}
 \DeclareMathOperator{\height}{height}
 \DeclareMathOperator{\type}{type}
+\DeclareMathOperator{\elements}{elements}
 
 \renewcommand{\epsilon}{\varepsilon}
 \renewcommand{\theta}{\vartheta}
@@ -66,69 +69,84 @@
 \ead{gilles.peiffer@student.uclouvain.be}
 
 \begin{abstract}
-Ce papier donne les invariants de représentation, la fonction d'abstraction et les spécifications des fonctions \inlinedafny|insert| et \inlinedafny|join| pour une implémentation des arbres 2-3 basée sur \cite{algs4th} et \cite{wiki:23tree}.
+Ce papier donne les invariants de représentation, la fonction d'abstraction et les spécifications des fonctions \inlinedafny|insert| et \inlinedafny|join| pour une implémentation des arbres 2-3 basée sur \cite{algs4th} et \cite{wiki:23tree}\footnote{La définition des arbres 2-3 de cette dernière source n'était pas valable lorsque l'arbre 2-3 contient des doublons, ce qui a été corrigé.}.
 \end{abstract}
 \maketitle
 
 \section{Invariant de représentation}
 Commençons par définir quelques fonctions auxiliaires:
 \begin{itemize}
-	\item \(\size(T)\): donne le nombre de n\oe{}uds d'un arbre \(T\);
-	\item \(\height(T)\): donne la hauteur d'un arbre \(T\);
-	\item \(\type(T)\): donne le nombre de sours-arbres du n\oe{}ud source de l'arbre \(T\).
+	\item \(\size(t)\): donne le nombre de n\oe{}uds d'un arbre \(t\);
+	\item \(\height(t)\): donne la hauteur d'un arbre \(t\);
+	\item \(\type(t)\): donne le nombre de sours-arbres du n\oe{}ud source de l'arbre \(t\).
 \end{itemize}
-Afin d'alléger la notation de l'invariant de représentation \(\ok(T)\), voici quelques fonctions supplémentaires.
+Afin d'alléger la notation de l'invariant de représentation \(\ok(t)\), voici quelques conventions supplémentaires.
 \begin{itemize}
-	\item Si le n\oe{}ud source de \(T\) est un 2-n\oe{}ud, alors \(L\) et \(R\) dénotent respectivement le sous-arbre de gauche et de droite de \(T\), alors que \(a\) dénote la donnée de son n\oe{}ud source.
-	\item Si le n\oe{}ud source de \(T\) est un 3-n\oe{}ud, alors \(L\), \(M\) et \(R\) dénotent respectivement le sous-arbre de gauche, du milieu et de droite de \(T\), alors que \(a< b\) sont les données du n\oe{}ud source.
+	\item Si le n\oe{}ud source de \(t\) est un 2-n\oe{}ud, alors \(\ell\) et \(r\) dénotent respectivement le sous-arbre de gauche et de droite de \(t\), alors que \(a\) dénote la donnée de son n\oe{}ud source.
+	\item Si le n\oe{}ud source de \(t\) est un 3-n\oe{}ud, alors \(\ell\), \(m\) et \(r\) dénotent respectivement le sous-arbre de gauche, du milieu et de droite de \(t\), alors que \(a < b\) sont les données du n\oe{}ud source.
 \end{itemize}
 \begin{align}
-f(T) &= \Big(\size(L) > 0 \land \size(R) > 0\Big) \land \Big(\height(L) = \height(R)\Big) \land \Big(\forall \lambda \in L, \rho \in R : \lambda < a \le \rho \Big)\,,\\
-g(T) &= \begin{multlined}[t] \Big(\size(L) > 0 \land \size(M) > 0 \land \size(R) > 0\Big) \land \Big(\height(L) = \height(M) = \height(R)\Big) \land {}\\ \Big(\forall \lambda \in L, \mu \in M, \rho \in R : \lambda < a \le \mu < b \le \rho \Big)\,.
+f(t) &= \Big(\size(\ell) > 0 \land \size(r) > 0\Big) \land \Big(\height(\ell) = \height(r)\Big) \land \Big(\forall \lambda \in \ell, \rho \in r : \lambda < a \le \rho \Big)\,,\\
+g(r) &= \begin{multlined}[t] \Big(\size(\ell) > 0 \land \size(m) > 0 \land \size(r) > 0\Big) \land \Big(\height(\ell) = \height(m) = \height(r)\Big) \land {}\\ \Big(\forall \lambda \in \ell, \mu \in m, \rho \in r : \lambda < a \le \mu < b \le \rho \Big)\,.
 \end{multlined}
 \end{align}
 
 L'invariant de représentation est alors donné par
 \begin{equation}
-\ok(T) \equiv \size(T) = 0 \lor \Big(\type(T) = 2 \land f(T)\Big) \lor  \Big(\type(T) = 3 \land g(T)\Big)\,.
+\boxed{\ok(t) \equiv \size(t) = 0 \lor \Big(\type(t) = 2 \land f(t)\Big) \lor  \Big(\type(t) = 3 \land g(t)\Big)\,.}
 \end{equation}
 
 \section{Fonction d'abstraction}
-La fonction d'abstraction \abs() est donnée par
+Définissons une séquence d'entiers \(\seq{\cdot}\) par la règle de concaténation suivante:
+\begin{align}
+\seq{\seq{a}, \seq{b}} = \seq{\mathrm{concat}(a, b)}\,,
+\end{align}
+où \(a\) et \(b\) sont des séquences potentiellement vides ou des nombres.
+En utilisant la même notation que pour l'invariant de représentation,
+La fonction d'abstraction \(\abs(t)\) est alors donnée par
 \begin{equation}
-\abs() = \,.
+\boxed{\abs(t) =
+\begin{cases}
+\seq{}\,, & \textnormal{si } t = \textnormal{\inlinedafny|Vide|}\,,\\
+\seq{\abs(\ell), a, \abs(r)}\,, & \textnormal{si } t = \textnormal{\inlinedafny|Deux|}(\ell, a, r)\,,\\
+\seq{\abs(\ell), a, \abs(m), b, \abs(r)}\,, & \textnormal{si } t = \textnormal{\inlinedafny|Trois|}(\ell, a, m, b, r)\,.
+\end{cases}}
 \end{equation}
 
 \section{Spécifications formelles}
 \subsection{Spécification de \inlinedafny|insert(t: Tree, i: int) returns (t': Tree)|}
 \subsubsection{Précondition}
 La précondition est simplement que l'invariant de représentation soit respecté.
-\begin{dafny}
-@Pre $\equiv$ ok(t)
-\end{dafny}
+\begin{equation}
+\boxed{\textnormal{Pre: } \ok(t)\,.}
+\end{equation}
 
 \subsubsection{Postcondition}
 Comme la fonction \inlinedafny|insert| doit conserver le rep-invariant, il fait également partie de la postcondition.
-En plus de cela, on requiert également que le multiensemble des éléments du nouvel arbre soit égal au multiensemble résultant de l'union de l'arbre original et de \inlinedafny|i|, où les multiensemble sont définis comme dans~\cite{blizard1991}.
-\begin{dafny}
-@Post $\equiv$ ok(t') $\land$ elements(t') $=$ elements(t) $\cup$ multiset(i)
-\end{dafny}
-Ici, \inlinedafny|elements| est une fonction qui prend en argument un arbre 2-3 et retourne le multiensemble de ses éléments.
+En plus de cela, on requiert également que le multiensemble des éléments du nouvel arbre soit égal au multiensemble correspondant à l'arbre résultant de l'union de l'arbre original et de \(i\), où les multiensembles sont définis comme dans~\cite{blizard1991}.
+\begin{equation}
+\boxed{\textnormal{Post: } \ok(t') \land \elements(t') = \elements(t) \cup \{\!\!\{i\}\!\!\}\,.}
+\end{equation}
+Ici, \(\elements\) est un opérateur qui prend en argument un arbre 2-3 et retourne le multiensemble de ses éléments, alors que la notation \(\{\!\!\{\cdot\}\!\!\}\) dénote un multiensemble.
 
 \subsection{Spécification de \inlinedafny|join(t1: Tree, t2: Tree) returns (t: Tree)|}
 \subsubsection{Précondition}
 La fonction \inlinedafny|join| a comme précondition que les deux arbres pris en argument soient des arbres 2-3 valables.
-\begin{dafny}
-@Pre $\equiv$ ok(t1) $\land$ ok(t2)
-\end{dafny}
+\begin{equation}
+\boxed{\textnormal{Pre: } \ok(t1) \land \ok(t2)\,.}
+\end{equation}
 
 \subsubsection{Postcondition}
 Le résultat de la fonction \inlinedafny|join| doit également être un arbre 2-3 valable.
 En plus de cela, on requiert également que le multiensemble des éléments du nouvel arbre soit égal au multiensemble résultant de l'union des deux arbres initiaux.
-\begin{dafny}
-@Post $\equiv$ ok(t) $\land$ elements(t) $=$ elements(t1) $\cup$ elements(t2)
-\end{dafny}
-La fonction \inlinedafny|elements| est la même que pour \inlinedafny|insert|.
+\begin{equation}
+\boxed{\textnormal{Post: } \ok(t) \land \elements(t) = \elements(t1) \cup \elements(t2)\,.}
+\end{equation}
+La fonction \(\elements\) est la même que pour \inlinedafny|insert|.
+
+\section{Code}
+
+\lstfile{../src/code.dfy}
 
 \section*{Références}
 

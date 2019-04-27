@@ -150,15 +150,16 @@ method insert(t: Tree, i: int) returns (t': Tree)
     t' := newNode;
 }
 
-method Main() {
-var t := insert(Vide, 12); print t, "\n";
-t := insert(t, 5); print t, "\n\n";
-t := insert(t, 10); print t, "\n\n";
-t := insert(t, 3); print t, "\n\n";
-t := insert(t, 13); print t, "\n\n";
-t := insert(t, 14); print t, "\n\n";
-t := insert(t, 15); print t, "\n\n";
-t := insert(t, 17); print t, "\n\n";
-t := insert(t, 18); print t, "\n\n";
-t := insert(t, 15); print t, "\n\n";
+method Main()
+{
+    var t := insert(Vide, 12); print t, "\n";
+    t := insert(t, 5); print t, "\n\n";
+    t := insert(t, 10); print t, "\n\n";
+    t := insert(t, 3); print t, "\n\n";
+    t := insert(t, 13); print t, "\n\n";
+    t := insert(t, 14); print t, "\n\n";
+    t := insert(t, 15); print t, "\n\n";
+    t := insert(t, 17); print t, "\n\n";
+    t := insert(t, 18); print t, "\n\n";
+    t := insert(t, 15); print t, "\n\n";
 }
