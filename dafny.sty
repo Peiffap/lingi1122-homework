@@ -4,10 +4,15 @@
 
 \usepackage{listings}
 \RequirePackage{mathtools}
+\RequirePackage{xcolor}
+\definecolor{commentgreen}{RGB}{2,112,10}
+\definecolor{eminence}{RGB}{108,48,130}
+\definecolor{weborange}{RGB}{255,165,0}
+\definecolor{frenchplum}{RGB}{129,20,83}
 
 \lstdefinelanguage{dafny}{
   morekeywords={class,datatype,codatatype,newtype,type,iterator,trait,extends,
-      bool,char,nat,int,real,object,set,iset,multiset,seq,string,map,imap,array,array2,array3,
+      bool,char,nat,int,real,object,set,iset,multiset,seq,string,map,imap,array,array2,array3,Tree,
       bv0,bv1,bv2,bv3,bv4,bv5,bv6,bv7,bv8,bv12,bv16,bv20,bv24,bv32,bv48,bv64,bv128,
       function,predicate,copredicate,inductive,
       ghost,var,static,protected,refines,
@@ -99,14 +104,15 @@
   numberstyle=\tiny,
   stepnumber=5,
   basicstyle=\scriptsize\sffamily,
-  commentstyle=\itshape,
-  keywordstyle=\bfseries,
-  ndkeywordstyle=\bfseries,
+  commentstyle=\color{commentgreen} \itshape,
+  keywordstyle=\color{frenchplum}\bfseries,
+  ndkeywordstyle=\color{eminence}\bfseries,
+  stringstyle=\color{red},
 }
 \lstnewenvironment{dafny}[1][]{%
   \lstset{language=dafny,
     floatplacement={tbp},captionpos=b,
-    frame=lines,xleftmargin=8pt,xrightmargin=8pt,basicstyle=\ttfamily,#1}}{}
+    frame=lines,xleftmargin=8pt,xrightmargin=8pt,basicstyle=\ttfamily,mathescape,#1}}{}
 \lstnewenvironment{dafnyNoLines}[1][]{%
   \lstset{language=dafny,
     floatplacement={tbp},captionpos=b,
