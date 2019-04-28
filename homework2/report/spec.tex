@@ -76,18 +76,18 @@ Ce papier donne les invariants de représentation, la fonction d'abstraction et 
 \section{Invariant de représentation}
 Commençons par définir quelques fonctions auxiliaires:
 \begin{itemize}
-	\item \(\size(t)\): donne le nombre de n\oe{}uds d'un arbre \(t\);
+	\item \(\size(t)\): donne le nombre de n\oe{}uds d'un arbre \(t\) (on considère ici que \inlinedafny|Vide| est un n\oe{}ud de taille \(0\));
 	\item \(\height(t)\): donne la hauteur d'un arbre \(t\);
 	\item \(\type(t)\): donne le nombre de sours-arbres du n\oe{}ud source de l'arbre \(t\).
 \end{itemize}
 Afin d'alléger la notation de l'invariant de représentation \(\ok(t)\), voici quelques conventions supplémentaires.
 \begin{itemize}
 	\item Si le n\oe{}ud source de \(t\) est un 2-n\oe{}ud, alors \(\ell\) et \(r\) dénotent respectivement le sous-arbre de gauche et de droite de \(t\), alors que \(a\) dénote la donnée de son n\oe{}ud source.
-	\item Si le n\oe{}ud source de \(t\) est un 3-n\oe{}ud, alors \(\ell\), \(m\) et \(r\) dénotent respectivement le sous-arbre de gauche, du milieu et de droite de \(t\), alors que \(a < b\) sont les données du n\oe{}ud source.
+	\item Si le n\oe{}ud source de \(t\) est un 3-n\oe{}ud, alors \(\ell\), \(m\) et \(r\) dénotent respectivement le sous-arbre de gauche, du milieu et de droite de \(t\), alors que \(a \le b\) sont les données du n\oe{}ud source.
 \end{itemize}
 \begin{align}
-f(t) &= \Big(\size(\ell) > 0 \land \size(r) > 0\Big) \land \Big(\height(\ell) = \height(r)\Big) \land \Big(\forall \lambda \in \ell, \rho \in r : \lambda < a \le \rho \Big)\,,\\
-g(r) &= \begin{multlined}[t] \Big(\size(\ell) > 0 \land \size(m) > 0 \land \size(r) > 0\Big) \land \Big(\height(\ell) = \height(m) = \height(r)\Big) \land {}\\ \Big(\forall \lambda \in \ell, \mu \in m, \rho \in r : \lambda < a \le \mu < b \le \rho \Big)\,.
+f(t) &= \Big(\size(\ell) \ge 0 \land \size(r) \ge 0\Big) \land \Big(\height(\ell) = \height(r)\Big) \land \Big(\forall \lambda \in \ell, \rho \in r : \lambda \le a \le \rho \Big)\,,\\
+g(t) &= \begin{multlined}[t] \Big(\size(\ell) \ge 0 \land \size(m) \ge 0 \land \size(r) \ge 0\Big) \land \Big(\height(\ell) = \height(m) = \height(r)\Big) \land {}\\ \Big(\forall \lambda \in \ell, \mu \in m, \rho \in r : \lambda \le a \le \mu \le b \le \rho \Big)\,.
 \end{multlined}
 \end{align}
 
