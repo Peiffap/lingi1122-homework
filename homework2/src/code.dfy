@@ -9,9 +9,9 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
 {
     match t
     case Vide => 
-        ret := Deux(Vide, i, Vide); // empty
+        ret := Deux(Vide, i, Vide);
         isSame := false;
-    case Deux(left, val, right) => // It was a 2-tree
+    case Deux(left, val, right) =>
         if (val >= i)
         {
             var newLeft, cont := insert2(left, i);
@@ -30,7 +30,6 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
                     ret := Deux(newLeft, val, right);
                     isSame := true;
                 case Deux(leftC, valC, rightC) =>
-                    // Process to make a three of it
                     ret := Trois(leftC, valC, rightC, val, right);
                     isSame := true;
             }
@@ -122,7 +121,7 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
             {
                 match newMiddle
                 case Vide =>
-                    ret := t; // Should be something different but I don't know
+                    ret := t;
                     isSame := true;
                 case Trois(leftC, valLC, middleC, valRC, rightC) =>
                     ret := Trois(left, valL, newMiddle, valR, right);
@@ -143,8 +142,8 @@ method insert2(t: Tree, i:int) returns (ret: Tree, isSame: bool)
 }
 
 method insert(t: Tree, i: int) returns (t': Tree)
-    // Requires ...
-    // Ensures ...
+    // Requires
+    // Ensures
 {
     var newNode, cont := insert2(t, i);
     t' := newNode;
