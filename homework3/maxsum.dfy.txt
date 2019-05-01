@@ -1,0 +1,119 @@
+
+function sum(a: seq<int>, i: int, j: int): int
+    requires 0 <= i <= j < |a|
+    decreases j - i
+{
+    if i == j then a[j] else sum(a, i, j-1) + a[j]
+}
+
+// This is the only allowed `function method`.
+// Everything else must be either `function` or `method`.
+function method max(x: int, y: int): int
+    ensures max(x, y) == x || max(x, y) == y
+    ensures max(x, y) >= x && max(x, y) >= y
+{
+    if x > y then x else y
+}
+
+// Three different algorithms to solve the maximum subarray problem.
+// The maximum subarray problem is the task of finding a contiguous,
+// non-empty subarray with the largest sum.
+
+// An O(n³) implementation, to warm up.
+method maxsumDumb(a: seq<int>) returns (maxSum: int)
+    requires |a| > 0
+    //ensures exists ii, jj | 0 <= ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    ensures forall ii, jj | 0 <= ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
+{
+    var i := 0;
+    maxSum := a[0];
+    assert sum(a, 0, 0) == maxSum;
+    // this may help: assert sum(a, 0, 0) == maxSum;
+
+    while i < |a| 
+    invariant 0 <= i <= |a|
+    decreases |a| - i
+    // Not sure about the <=          here       here
+    //invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
+
+    {
+        var j := i;
+
+        while j < |a|
+        decreases |a| - j
+        invariant i <= j <= |a|
+        //invariant exists ii, jj | 0 <= ii <= i && ii <= jj < j :: maxSum == sum(a, ii, jj)
+        invariant forall jj | i <= jj < j :: maxSum >= sum(a, i, jj)
+        {
+            var k := i;
+            var currentSum := a[i];
+
+            while k < j
+            decreases j - k
+            invariant i <= k <= j
+            invariant currentSum == sum(a, i, k)
+            {
+                k := k + 1;
+                currentSum := currentSum + a[k];
+            }
+
+            assert currentSum == sum(a, i, k);
+
+            maxSum := max(currentSum, maxSum);
+            assert maxSum >= old(maxSum) && maxSum >= currentSum;
+            assert maxSum >= sum(a, i, j);
+            j := j + 1;
+        }
+        assert forall jj | i <= jj < |a| :: maxSum >= sum(a,i,jj);
+        i := i + 1;
+    }
+}
+
+// An O(n²) implementation, slightly improved over the previous one.
+method maxsumImproved(a: seq<int>) returns (maxSum: int)
+{
+    var i := 0;
+    maxSum := a[0];
+
+    while i < |a| 
+    {
+        var j := i;
+        var currentSum := a[i];
+        maxSum := max(currentSum, maxSum);
+
+        while j + 1 < |a|
+        {
+            j := j + 1;
+            currentSum := currentSum + a[j];
+            maxSum := max(currentSum, maxSum);
+        }
+
+        i := i + 1;
+    }
+}
+
+// `s` is the maximal sum of any subarray of `a` ending with cell `n` included.
+// See https://en.wikipedia.org/wiki/Maximum_subarray_problem#Kadane.27s_algorithm
+predicate isMaxSumAt(a: seq<int>, s: int, n: int)
+{
+    true // TODO
+}
+
+// An optimal, O(n) implementation. This one is harder to prove.
+// You may wish to use the above `isMaxSumAt` predicate.
+//
+// Dafny may need some carefully crafted asserts to prove this one.
+method maxsumLinear(a: seq<int>) returns (maxSum: int)
+{
+    var j := 0;
+    maxSum := a[0];
+    var currentSum := a[0];
+    
+    while j + 1 < |a|
+    { 
+        j := j + 1;
+        currentSum := max(a[j], currentSum + a[j]);
+        maxSum := max(currentSum, maxSum);
+    }
+}
