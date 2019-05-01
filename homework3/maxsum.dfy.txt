@@ -22,7 +22,7 @@ function method max(x: int, y: int): int
 // An O(n³) implementation, to warm up.
 method maxsumDumb(a: seq<int>) returns (maxSum: int)
     requires |a| > 0
-    //ensures exists ii, jj | 0 <= ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    ensures exists ii, jj | 0 <= ii <= jj < |a| :: maxSum == sum(a, ii, jj)
     ensures forall ii, jj | 0 <= ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
 {
     var i := 0;
@@ -32,25 +32,22 @@ method maxsumDumb(a: seq<int>) returns (maxSum: int)
 
     while i < |a| 
     invariant 0 <= i <= |a|
-    decreases |a| - i
-    // Not sure about the <=          here       here
-    //invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
     invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
 
     {
         var j := i;
 
         while j < |a|
-        decreases |a| - j
         invariant i <= j <= |a|
-        //invariant exists ii, jj | 0 <= ii <= i && ii <= jj < j :: maxSum == sum(a, ii, jj)
+        invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+        invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
         invariant forall jj | i <= jj < j :: maxSum >= sum(a, i, jj)
         {
             var k := i;
             var currentSum := a[i];
 
             while k < j
-            decreases j - k
             invariant i <= k <= j
             invariant currentSum == sum(a, i, k)
             {
