@@ -78,7 +78,7 @@ Commençons par définir quelques fonctions auxiliaires:
 \begin{itemize}
 	\item \(\size(t)\): donne le nombre de n\oe{}uds d'un arbre \(t\) (on considère ici que \inlinedafny|Vide| est un n\oe{}ud de taille \(0\));
 	\item \(\height(t)\): donne la hauteur d'un arbre \(t\);
-	\item \(\type(t)\): donne le nombre de sours-arbres du n\oe{}ud source de l'arbre \(t\).
+	\item \(\type(t)\): donne le nombre de sous-arbres du n\oe{}ud source de l'arbre \(t\).
 \end{itemize}
 Afin d'alléger la notation de l'invariant de représentation \(\ok(t)\), voici quelques conventions supplémentaires.
 \begin{itemize}
@@ -101,7 +101,8 @@ Définissons une séquence d'entiers \(\seq{\cdot}\) par la règle de concaténa
 \begin{align}
 \seq{\seq{a}, \seq{b}} = \seq{\mathrm{concat}(a, b)}\,,
 \end{align}
-où \(a\) et \(b\) sont des séquences potentiellement vides ou des nombres.
+où \(a\) et \(b\) sont des séquences potentiellement vides ou des nombres
+et \(\mathrm{concat}\) représente la concaténation des éléments de \(a\) et \(b\) (par exemple, si \(a = \seq{1, 2}\) et \(b = \seq{5}\), alors \(\mathrm{concat}(a, b) = \seq{1, 2, 5}\)).
 En utilisant la même notation que pour l'invariant de représentation,
 La fonction d'abstraction \(\abs(t)\) est alors donnée par
 \begin{equation}
