@@ -55,34 +55,45 @@ method maxsumDumb(a: seq<int>) returns (maxSum: int)
                 currentSum := currentSum + a[k];
             }
 
-            assert currentSum == sum(a, i, k);
-
             maxSum := max(currentSum, maxSum);
-            assert maxSum >= old(maxSum) && maxSum >= currentSum;
-            assert maxSum >= sum(a, i, j);
             j := j + 1;
         }
-        assert forall jj | i <= jj < |a| :: maxSum >= sum(a,i,jj);
         i := i + 1;
     }
 }
 
 // An O(n²) implementation, slightly improved over the previous one.
 method maxsumImproved(a: seq<int>) returns (maxSum: int)
+    requires |a| > 0
+    ensures exists ii, jj | 0 <= ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    ensures forall ii, jj | 0 <= ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
 {
     var i := 0;
     maxSum := a[0];
+    assert maxSum == sum(a, 0, 0);
 
     while i < |a| 
+    invariant 0 <= i <= |a|
+    invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
+
     {
         var j := i;
         var currentSum := a[i];
+        assert currentSum == sum(a, i, i);
         maxSum := max(currentSum, maxSum);
 
         while j + 1 < |a|
+        invariant i <= j < |a| // Could do <= |a|-1
+        invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+        invariant forall ii, jj | 0 <= ii <  i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
+        invariant currentSum == sum(a, i, j)
+        invariant forall jj | i <= jj < j+1 :: maxSum >= sum(a, i, jj)
+        
         {
             j := j + 1;
             currentSum := currentSum + a[j];
+            assert currentSum == sum(a, i, j);
             maxSum := max(currentSum, maxSum);
         }
 
@@ -102,9 +113,13 @@ predicate isMaxSumAt(a: seq<int>, s: int, n: int)
 //
 // Dafny may need some carefully crafted asserts to prove this one.
 method maxsumLinear(a: seq<int>) returns (maxSum: int)
+    requires |a| > 0
+    ensures exists ii, jj | 0 <= ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    ensures forall ii, jj | 0 <= ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
 {
     var j := 0;
     maxSum := a[0];
+    assert maxSum == sum(a, 0, 0);
     var currentSum := a[0];
     
     while j + 1 < |a|
