@@ -106,8 +106,7 @@ method maxsumImproved(a: seq<int>) returns (maxSum: int)
 predicate isMaxSumAt(a: seq<int>, s: int, n: int)
     requires 0 <= n < |a|
 {
-    (exists i | 0 <= i <= n :: s == sum(a, i, n))
-    && forall i | 0 <= i <= n :: s >= sum(a, i, n)
+    forall i | 0 <= i <= n :: s >= sum(a, i, n)
 }
 
 // An optimal, O(n) implementation. This one is harder to prove.
