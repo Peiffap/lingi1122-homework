@@ -125,7 +125,6 @@ method maxsumLinearGhost(a: seq<int>) returns (maxSum: int)
     ghost var i := 0;
     var j := 0;
     var currentSum := a[0];
-    assert currentSum == sum(a, 0, 0);
     
     maxSum := currentSum;
     
@@ -138,23 +137,17 @@ method maxsumLinearGhost(a: seq<int>) returns (maxSum: int)
     invariant forall ii, jj | 0 <= ii <= jj <= j :: maxSum >= sum(a, ii, jj)
     decreases  |a| - (j + 1)
     { 
-        assert currentSum == sum(a, i, j);
-        assert isMaxSumAt(a, currentSum,j);
         
         j := j + 1;
 
         if (currentSum < 0) {
             i := j;
             currentSum := a[j];
-            assert currentSum == sum(a, j, j);
+            
             
         } else {
-            assert currentSum == sum(a,i,j-1);
             currentSum := currentSum + a[j];
-            assert i <= j;
-            assert currentSum == sum(a, i, j);
         }
-        assert isMaxSumAt(a, currentSum, j);
         
 
         maxSum := max(currentSum, maxSum);
