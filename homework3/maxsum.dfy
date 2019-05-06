@@ -148,9 +148,17 @@ method maxsumLinearGhost(a: seq<int>) returns (maxSum: int)
     maxSum := currentSum;
     
     while j + 1 < |a|
+    // invariant for the values of j: from 0 to |a| not included, because the while-loop
+    // breaks when j+1 == |a| ==> j < |a|
     invariant 0 <= j < |a|
+    // invariant for the values of i: from 0 to j included, because i is the lower bound of the 
+    // current max subsequence ending at index j
     invariant 0 <= i <= j
+    // either i is equal to j (the maximum subsequence ending at j is only the value at index j)
+    // or i is still the lower bound of the maximum subsequence ending at j-1
+    // but, either case, currentSum is equal to the sum of values from i to j included
     invariant currentSum == sum(a, i, j)
+    // Also, we ask currentSum to be the maximum subsequence sum, for all subsequences ending at index j
     invariant isMaxSumAt(a, currentSum, j)
     invariant exists ii, jj | 0 <= ii <= jj <= j :: maxSum == sum(a, ii, jj)
     invariant forall ii, jj | 0 <= ii <= jj <= j :: maxSum >= sum(a, ii, jj)
