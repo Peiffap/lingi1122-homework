@@ -104,28 +104,60 @@ method maxsumImproved(a: seq<int>) returns (maxSum: int)
 // `s` is the maximal sum of any subarray of `a` ending with cell `n` included.
 // See https://en.wikipedia.org/wiki/Maximum_subarray_problem#Kadane.27s_algorithm
 predicate isMaxSumAt(a: seq<int>, s: int, n: int)
+    requires 0 <= n < |a|
 {
-    true // TODO
+    (exists i | 0 <= i <= n :: s == sum(a, i, n))
+    && forall i | 0 <= i <= n :: s >= sum(a, i, n)
 }
 
 // An optimal, O(n) implementation. This one is harder to prove.
 // You may wish to use the above `isMaxSumAt` predicate.
 //
 // Dafny may need some carefully crafted asserts to prove this one.
-method maxsumLinear(a: seq<int>) returns (maxSum: int)
+// Edit : Using the Ghost function provided on Moodle by Guillaume Maudoux which is simpler to prove.
+method maxsumLinearGhost(a: seq<int>) returns (maxSum: int)
     requires |a| > 0
     ensures exists ii, jj | 0 <= ii <= jj < |a| :: maxSum == sum(a, ii, jj)
     ensures forall ii, jj | 0 <= ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
 {
+    // Ghost vars are not part of the code, and will be removed during compilation.
+    // They can however be used as if they were normal variables for specification purposes.
+    ghost var i := 0;
     var j := 0;
-    maxSum := a[0];
-    assert maxSum == sum(a, 0, 0);
     var currentSum := a[0];
+    assert currentSum == sum(a, 0, 0);
+    
+    maxSum := currentSum;
     
     while j + 1 < |a|
+    invariant 0 <= j < |a|
+    invariant 0 <= i <= j
+    invariant currentSum == sum(a, i, j)
+    invariant isMaxSumAt(a, currentSum, j)
+    invariant exists ii, jj | 0 <= ii <= jj <= j :: maxSum == sum(a, ii, jj)
+    invariant forall ii, jj | 0 <= ii <= jj <= j :: maxSum >= sum(a, ii, jj)
+    decreases  |a| - (j + 1)
     { 
+        assert currentSum == sum(a, i, j);
+        assert isMaxSumAt(a, currentSum,j);
+        
         j := j + 1;
-        currentSum := max(a[j], currentSum + a[j]);
+
+        if (currentSum < 0) {
+            i := j;
+            currentSum := a[j];
+            assert currentSum == sum(a, j, j);
+            
+        } else {
+            assert currentSum == sum(a,i,j-1);
+            currentSum := currentSum + a[j];
+            assert i <= j;
+            assert currentSum == sum(a, i, j);
+        }
+        assert isMaxSumAt(a, currentSum, j);
+        
+
         maxSum := max(currentSum, maxSum);
+        
     }
 }
