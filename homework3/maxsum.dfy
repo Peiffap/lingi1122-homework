@@ -20,6 +20,16 @@ function method max(x: int, y: int): int
 // non-empty subarray with the largest sum.
 
 // An O(n³) implementation, to warm up.
+
+/*
+ For the three algorithms, the preconditions and postcoditions are the sames
+ @pre: as the statement says that the returned maxSum is a non-empty interval, we
+       can say require that the sequence (a) is non-empty
+
+ @post: maxSum is greater or equal to any sum of subsequence of the sequence a
+        and, of course, maxSum is the sum of a particular subsequence of the sequence a
+ */
+
 method maxsumDumb(a: seq<int>) returns (maxSum: int)
     requires |a| > 0
     ensures exists ii, jj | 0 <= ii <= jj < |a| :: maxSum == sum(a, ii, jj)
@@ -27,28 +37,38 @@ method maxsumDumb(a: seq<int>) returns (maxSum: int)
 {
     var i := 0;
     maxSum := a[0];
+    // We help Danfy here to start
     assert sum(a, 0, 0) == maxSum;
-    // this may help: assert sum(a, 0, 0) == maxSum;
 
     while i < |a| 
+    // i goes from 0 to |a|, causing the while-loop to stop
     invariant 0 <= i <= |a|
+    // We went so fare to the start index of the subsequences i
+    // We have checked the sum of all the subsequences starting by indexes until i
     invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
+    // maxSum is the maximum of all the subsequences checked so far
     invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
 
     {
         var j := i;
 
         while j < |a|
+        // invariant for the values of j
         invariant i <= j <= |a|
+        // the next two invariants are the same as for the outer loop
         invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
         invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
+        // this invariant says that for the current value of i, we have checked 
+        // all the subsequences from i to j not included
         invariant forall jj | i <= jj < j :: maxSum >= sum(a, i, jj)
         {
             var k := i;
             var currentSum := a[i];
 
             while k < j
+            // invariant for the values of k
             invariant i <= k <= j
+            // currentSum is currently the sum of all the values from i to k
             invariant currentSum == sum(a, i, k)
             {
                 k := k + 1;
