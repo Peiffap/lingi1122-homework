@@ -22,12 +22,13 @@ function method max(x: int, y: int): int
 // An O(n³) implementation, to warm up.
 
 /*
- For the three algorithms, the preconditions and postcoditions are the sames
- @pre: as the statement says that the returned maxSum is a non-empty interval, we
-       can say require that the sequence (a) is non-empty
-
- @post: maxSum is greater or equal to any sum of subsequence of the sequence a
-        and, of course, maxSum is the sum of a particular subsequence of the sequence a
+ * For the three algorithms, the preconditions and postconditions are the same.
+ *
+ * @Pre: as the statement says that the returned maxSum is a non-empty interval,
+ * we can require that the sequence `a` is non-empty.
+ *
+ * @Post: maxSum is greater than or equal to any sum of subsequences of the sequence `a`
+* and, maxSum is the sum of a particular subsequence of the sequence `a`.
  */
 
 method maxsumDumb(a: seq<int>) returns (maxSum: int)
@@ -37,38 +38,38 @@ method maxsumDumb(a: seq<int>) returns (maxSum: int)
 {
     var i := 0;
     maxSum := a[0];
-    // We help Danfy here to start
+    // We help Danfy here to start.
     assert sum(a, 0, 0) == maxSum;
 
     while i < |a| 
-    // i goes from 0 to |a|, causing the while-loop to stop
+    // i goes from 0 to |a|, causing the while loop to stop.
     invariant 0 <= i <= |a|
-    // We went so fare to the start index of the subsequences i
-    // We have checked the sum of all the subsequences starting by indexes until i
+    // We went so far to the start index of the subsequence i.
+    // We have checked the sum of all the subsequences starting by indexes up to i.
     invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
-    // maxSum is the maximum of all the subsequences checked so far
+    // maxSum is the maximum of all the subsequences checked so far.
     invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
 
     {
         var j := i;
 
         while j < |a|
-        // invariant for the values of j
+        // Invariant for the values of j.
         invariant i <= j <= |a|
-        // the next two invariants are the same as for the outer loop
+        // The next two invariants are the same as for the outer loop.
         invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
         invariant forall ii, jj | 0 <= ii < i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
-        // this invariant says that for the current value of i, we have checked 
-        // all the subsequences from i to j not included
+        // This invariant says that for the current value of i, we have checked 
+        // all the subsequences from i to j, not included.
         invariant forall jj | i <= jj < j :: maxSum >= sum(a, i, jj)
         {
             var k := i;
             var currentSum := a[i];
 
             while k < j
-            // invariant for the values of k
+            // Invariant for the values of k.
             invariant i <= k <= j
-            // currentSum is currently the sum of all the values from i to k
+            // currentSum is currently the sum of all the values from i to k.
             invariant currentSum == sum(a, i, k)
             {
                 k := k + 1;
@@ -104,7 +105,7 @@ method maxsumImproved(a: seq<int>) returns (maxSum: int)
         maxSum := max(currentSum, maxSum);
 
         while j + 1 < |a|
-        invariant i <= j < |a| // Could do <= |a|-1
+        invariant i <= j < |a| // Could do <= |a|-1.
         invariant exists ii, jj | 0 <= ii <= i && ii <= jj < |a| :: maxSum == sum(a, ii, jj)
         invariant forall ii, jj | 0 <= ii <  i && ii <= jj < |a| :: maxSum >= sum(a, ii, jj)
         invariant currentSum == sum(a, i, j)
@@ -148,17 +149,17 @@ method maxsumLinearGhost(a: seq<int>) returns (maxSum: int)
     maxSum := currentSum;
     
     while j + 1 < |a|
-    // invariant for the values of j: from 0 to |a| not included, because the while-loop
-    // breaks when j+1 == |a| ==> j < |a|
+    // Invariant for the values of j: from 0 to |a| excluded, because the while loop
+    // breaks when j+1 == |a| ==> j < |a|.
     invariant 0 <= j < |a|
-    // invariant for the values of i: from 0 to j included, because i is the lower bound of the 
-    // current max subsequence ending at index j
+    // Invariant for the values of i: from 0 to j included, because i is the lower bound of the 
+    // current maximum subsequence ending at index j.
     invariant 0 <= i <= j
-    // either i is equal to j (the maximum subsequence ending at j is only the value at index j)
-    // or i is still the lower bound of the maximum subsequence ending at j-1
-    // but, either case, currentSum is equal to the sum of values from i to j included
+    // Either i is equal to j (the maximum subsequence ending at j is only the value at index j)
+    // or i is still the lower bound of the maximum subsequence ending at j-1.
+    // In either case, currentSum is equal to the sum of values from i to j included.
     invariant currentSum == sum(a, i, j)
-    // Also, we ask currentSum to be the maximum subsequence sum, for all subsequences ending at index j
+    // Also, we ask currentSum to be the maximum subsequence sum, for all subsequences ending at index j.
     invariant isMaxSumAt(a, currentSum, j)
     invariant exists ii, jj | 0 <= ii <= jj <= j :: maxSum == sum(a, ii, jj)
     invariant forall ii, jj | 0 <= ii <= jj <= j :: maxSum >= sum(a, ii, jj)
